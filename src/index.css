@@ -1,2 +1,11 @@
 @import url(./vendor/normalize.css);
 @import url(./vendor/fonts/fonts.css);
+
+.page {
+    background: #202020;
+    display: flex;
+    width: 1280px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}

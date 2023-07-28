@@ -1,4 +1,4 @@
-import './Preloaer.css';
+import './Preloader.css';
 // Preloader — отвечает за работу прелоадера.
 const Preloaer = (props) => {
     return (

@@ -3,7 +3,7 @@ import './Profile.css';
 const Profile = (props) => {
     return (
         <div>
-
+            
         </div>
     );
 };
