@@ -1,0 +1,56 @@
+.project {
+    padding: 110px 70px;
+}
+.project__text-list {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    padding: 70px 0 0 0;
+    margin: 0;
+    list-style: none;
+}
+.project__title {
+    margin: 0;
+    padding: 0 0 26px 0;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.8px;
+}
+.project__text {
+    margin: 0;
+    padding: 0 0 110px 0;
+    max-width: 550px;
+    font-size: 14px;
+    line-height: 20px;
+}
+.project__progress {
+    display: grid;
+    grid-template-columns: minmax(100px, 1fr) 4fr;
+    grid-template-rows: repeat(2, auto);
+  }
+  
+  .project__week {
+    margin: 0;
+    padding: 11px 10px;
+    font-size: 14px;
+    line-height: 13px;
+    font-weight: 400;
+    text-align: center;
+    background: #303030;
+  }
+  
+  .project__week_type_green{
+    color: #000;
+    background: #3DDC84;
+  }
+  
+  .project__week-signature {
+    margin: 0;
+    padding: 14px 0 0 0;
+    font-size: 14px;
+    line-height: 13px;
+    font-weight: 400;
+    color: #A0A0A0;
+    text-align: center;
+  }

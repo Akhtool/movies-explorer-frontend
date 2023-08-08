@@ -3,9 +3,5 @@
 
 .page {
     background: #202020;
-    display: flex;
-    width: 1280px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
+    margin: 0 auto;
 }
