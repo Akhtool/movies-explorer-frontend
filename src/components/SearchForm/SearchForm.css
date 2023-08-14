@@ -60,3 +60,35 @@
 .search-form__button:hover {
   opacity: 0.8;
 }
+
+/* Стили для планшетов (768px) */
+@media screen and (min-width: 321px) and (max-width: 768px) {
+  .search-form__container {
+    width: 708px;
+    height: 72px;
+  }
+  .search-form::after {
+    width: 708px;
+  }
+}
+
+/* Стили для мобильных устройств (320px) */
+@media screen and (max-width: 320px) {
+  .search-form__input {
+    width: 200px;
+    font-size: 16px;
+  }
+  .search-form::after {
+    width: 292px;
+  }
+  .search-form__container {
+    width: 292px;
+    height: 56px;
+    padding: 6px 4px 2px 8px;
+    margin: 69px 0 31px 0;
+  }
+  .search-form__button {
+    width: 80px;
+    height: 44px;
+  }
+}

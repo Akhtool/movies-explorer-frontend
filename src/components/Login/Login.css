@@ -106,3 +106,44 @@
 .login_link_type_register:hover {
   opacity: 0.7;
 }
+
+@media screen and (min-width: 321px) and (max-width: 768px) {
+  .login {
+    padding: 234px 0;
+  }
+}
+@media screen and (max-width: 320px) {
+  .login {
+    padding: 56px 0;
+  }
+  .login__container {
+    min-width: 260px;
+  }
+  .login__link {
+    align-self: center;
+    margin: 0 0 48px 0;
+  }
+  .login__title {
+    align-self: center;
+    margin: 0 0 79px 0;
+  }
+  .login__input-container {
+    align-self: center;
+  }
+  .login__form {
+    margin: 0 0 285px 0;
+  }
+  .login__button {
+    font-size: 12px;
+    padding: 15px 0 16px 0;
+  }
+  .login__text-container {
+    margin: 14px 0 0 0;
+  }
+  .login__text {
+    font-size: 12px;
+  }
+  .login_link_type_register {
+    font-size: 12px;
+  }
+}

@@ -44,7 +44,7 @@ const Profile = (props) => {
             />
           </label>
         </form>
-        <div className="profile__wrapper">
+        <div className="profile__btn-container">
           <button
             type="submit"
             form="profile__form"

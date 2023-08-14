@@ -1,56 +1,114 @@
 .project {
-    padding: 110px 70px;
+  padding: 110px 70px;
 }
 .project__text-list {
-    display: flex;
-    flex-direction: row;
-    gap: 40px;
-    padding: 70px 0 0 0;
-    margin: 0;
-    list-style: none;
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  padding: 70px 0 0 0;
+  margin: 0;
+  list-style: none;
 }
 .project__title {
-    margin: 0;
-    padding: 0 0 26px 0;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: normal;
-    letter-spacing: -0.8px;
+  margin: 0;
+  padding: 0 0 26px 0;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.8px;
 }
 .project__text {
-    margin: 0;
-    padding: 0 0 110px 0;
-    max-width: 550px;
-    font-size: 14px;
-    line-height: 20px;
+  margin: 0;
+  padding: 0 0 110px 0;
+  max-width: 550px;
+  font-size: 14px;
+  line-height: 20px;
 }
 .project__progress {
-    display: grid;
-    grid-template-columns: minmax(100px, 1fr) 4fr;
-    grid-template-rows: repeat(2, auto);
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) 4fr;
+  grid-template-rows: repeat(2, auto);
+}
+
+.project__week {
+  margin: 0;
+  padding: 12px 10px;
+  font-size: 14px;
+  line-height: 13px;
+  font-weight: 400;
+  text-align: center;
+  background: #303030;
+}
+
+.project__week_type_green {
+  color: #000;
+  background: #3ddc84;
+}
+
+.project__week-signature {
+  margin: 0;
+  padding: 17px 0 0 0;
+  font-size: 14px;
+  line-height: 13px;
+  font-weight: 400;
+  color: #a0a0a0;
+  text-align: center;
+}
+/* Стили для планшетов (768px) */
+@media screen and (min-width: 321px) and (max-width: 768px) {
+  .project {
+    padding: 92px 50px;
   }
-  
-  .project__week {
-    margin: 0;
-    padding: 11px 10px;
-    font-size: 14px;
-    line-height: 13px;
-    font-weight: 400;
-    text-align: center;
-    background: #303030;
+  .project__text-list {
+    gap: 30px;
   }
-  
-  .project__week_type_green{
-    color: #000;
-    background: #3DDC84;
+  .project__text {
+    font-size: 12px;
+    line-height: 18px;
+    padding: 0 0 93px 0;
   }
-  
+  .project__title {
+    padding: 0 0 22px 0;
+  }
   .project__week-signature {
-    margin: 0;
-    padding: 14px 0 0 0;
-    font-size: 14px;
-    line-height: 13px;
-    font-weight: 400;
-    color: #A0A0A0;
-    text-align: center;
+    padding: 15px 0 0 0;
   }
+}
+/* Стили для мобильных устройств (320px) */
+@media screen and (max-width: 320px) {
+  .project {
+    padding: 70px 18px;
+  }
+  .project__title {
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.72px;
+    padding: 0 0 17px 0;
+  }
+  .project__text-list {
+    flex-direction: column;
+    padding: 61px 0 42px 0;
+  }
+  .project__text {
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px; /* 145.455% */
+    padding: 0 0 17px 0;
+  }
+  .project__week {
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  .project__week-signature {
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    padding: 7px 0 0 0;
+  }
+}

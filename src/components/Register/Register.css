@@ -130,3 +130,42 @@
 .register_link_type_login:hover {
   opacity: 0.7;
 }
+
+@media screen and (min-width: 321px) and (max-width: 768px) {
+  .register {
+    padding: 234px 0;
+  }
+}
+@media screen and (max-width: 320px) {
+  .register {
+    padding: 56px 0;
+  }
+  .register__link {
+    align-self: center;
+    margin: 0 0 47px 0;
+  }
+  .register__title {
+    align-self: center;
+    margin: 0 0 80px 0;
+  }
+  .register__container {
+    min-width: 260px;
+    max-width: 260px;
+  }
+  .register__form {
+    margin: 0 0 221px 0;
+  }
+  .register__text {
+    font-size: 12px;
+  }
+  .register_link_type_login {
+    font-size: 12px;
+  }
+  .register__button {
+    font-size: 12px;
+    padding: 16px 0 15px 0;
+  }
+  .register__text-container {
+    margin: 14px 0 0 0;
+  }
+}

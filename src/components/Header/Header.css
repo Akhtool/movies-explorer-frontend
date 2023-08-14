@@ -3,7 +3,7 @@
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
-  padding: 16px 70px;
+  padding: 10px 70px;
   background: #073042;
 }
 .header_type_logged-in {
@@ -46,7 +46,7 @@
 .header__auth-register-link:hover {
   opacity: 0.7;
 }
-.hededer__auth-login-link {
+.header__auth-login-link {
   padding: 8px 20px;
   color: #000;
   text-decoration: none;
@@ -60,7 +60,7 @@
   line-height: 16px;
   transition: opacity 0.2s linear;
 }
-.hededer__auth-login-link:hover {
+.header__auth-login-link:hover {
   opacity: 0.8;
 }
 .header__nav {
@@ -88,7 +88,7 @@
 .header__nav-films:hover {
   opacity: 0.7;
 }
-.hededer__nav-saved-films {
+.header__nav-saved-films {
   color: #ffffff;
   text-decoration: none;
   font-size: 14px;
@@ -98,10 +98,10 @@
   padding-left: 20px;
   transition: 0.2s linear;
 }
-.hededer__nav-saved-films:hover {
+.header__nav-saved-films:hover {
   opacity: 0.7;
 }
-.hededer__nav-profile {
+.header__nav-profile {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -110,7 +110,7 @@
   padding-left: 50px;
   transition: 0.2s linear;
 }
-.hededer__nav-profile:hover {
+.header__nav-profile:hover {
   opacity: 0.7;
 }
 .header__nav-profile-text {
@@ -130,4 +130,72 @@
   background-image: url(../../images/header__profile-logo.svg);
   background-repeat: no-repeat;
   background-position: center;
+}
+.header__menu-item {
+  list-style: none;
+}
+.header__menu {
+  background: transparent;
+  background-image: url(../../images/burger-menu__icon.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 44px;
+  height: 44px;
+  display: none;
+  border: none;
+  padding: 0;
+  transition: opacity 0.5s linear;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+/* Стили для мобильных устройств (320px) */
+@media screen and (max-width: 320px) {
+  .header {
+    padding: 10px 14px;
+  }
+  .header_type_logged-in {
+    padding: 15px;
+  }
+  .header__auth {
+    gap: 14px;
+  }
+  .header__auth-login-link {
+    padding: 6px 12px;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+  }
+  .header__auth-register-link {
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+  }
+  .header__nav-item {
+    display: none;
+  }
+  .header__menu {
+    display: block;
+    width: 38px;
+    height: 44px;
+  }
+}
+
+/* Стили для планшетов (768px) */
+@media screen and (min-width: 321px) and (max-width: 768px) {
+  .header {
+    padding: 10px 30px;
+  }
+  .header__nav-item {
+    display: none;
+  }
+  .header__menu {
+    display: block;
+  }
+  .header_type_logged-in {
+    padding: 15px 30px;
+  }
 }

@@ -41,3 +41,28 @@
 .not-found-page__link:hover {
   opacity: 0.7;
 }
+
+@media screen and (min-width: 321px) and (max-width: 768px) {
+  .not-found-page {
+    padding: 408px 0;
+  }
+  .not-found-page__title {
+    margin: 0 0 3px 0;
+  }
+}
+@media screen and (max-width: 320px) {
+  .not-found-page {
+    padding: 329px 0;
+  }
+  .not-found-page__title {
+    margin: 0 0 10px 0;
+    font-size: 80px;
+  }
+  .not-found-page__subtitle {
+    margin: 0 0 284px 0;
+    font-size: 12px;
+  }
+  .not-found-page__link {
+    font-size: 12px;
+  }
+}
