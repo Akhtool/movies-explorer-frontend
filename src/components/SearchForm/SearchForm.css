@@ -1,0 +1,100 @@
+.search-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 70px;
+}
+/* .search-form::after {
+  content: "";
+  height: 1px;
+  width: 1140px;
+  background-color: rgba(170, 170, 170, 0.2);
+} */
+.search-form__container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1.5px solid rgba(170, 170, 170, 0.2);
+  padding: 10px 10px 10px 25px;
+  margin: 70px 0 27px 0;
+}
+.search-form__input {
+  color: rgba(139, 139, 139, 1);
+  width: 90%;
+  border: none;
+  box-sizing: border-box;
+  background-image: none;
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+.search-form__input::-webkit-input-placeholder {
+  color: rgba(139, 139, 139, 1);
+}
+.search-form__button {
+  border: none;
+  width: 100px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background: #4285f4;
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+  transition: 0.3s linear;
+  cursor: pointer;
+}
+.search-form__button:hover {
+  opacity: 0.8;
+}
+
+/* Стили для планшетов (768px) */
+@media screen and (min-width: 321px) and (max-width: 768px) {
+  .search-form {
+    padding: 0 30px;
+  }
+  .search-form__container {
+    width: 100%;
+    height: 72px;
+  }
+  /* .search-form::after {
+    width: 708px;
+  } */
+}
+
+/* Стили для мобильных устройств (320px) */
+@media screen and (max-width: 320px) {
+  .search-form {
+    padding: 0 14px;
+  }
+  .search-form__input {
+    width: 80%;
+    font-size: 16px;
+  }
+  /* .search-form::after {
+    width: 292px;
+  } */
+  .search-form__container {
+    width: 100%;
+    height: 56px;
+    padding: 6px 4px 2px 8px;
+    margin: 69px 0 31px 0;
+  }
+  .search-form__button {
+    width: 80px;
+    height: 44px;
+  }
+}

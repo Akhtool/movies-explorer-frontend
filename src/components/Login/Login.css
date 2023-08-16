@@ -1,0 +1,151 @@
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 70px 0;
+}
+.login__container {
+  display: flex;
+  flex-direction: column;
+  min-width: 396px;
+}
+.login__link {
+  margin: 0 0 35px 0;
+  padding: 0;
+}
+.login__logo {
+  margin: 0;
+  padding: 0;
+  transition: 0.2s linear;
+}
+.login__logo:hover {
+  opacity: 0.7;
+}
+.login__title {
+  margin: 0 0 40px 0;
+  padding: 0;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: normal;
+}
+.login__form {
+  margin: 0 0 198px 0;
+  padding: 0;
+}
+.login__input-container {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.login__input-label {
+  margin: 0 0 5px 0;
+  padding: 0;
+  color: #8b8b8b;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: normal;
+}
+.login__input {
+  margin: 0px 0 23px 0;
+  padding: 0 0 12px 0;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 400;
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid #424242;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.login__input:focus {
+  border-bottom: 1px solid #4285f4;
+}
+.login__button {
+  margin: 0;
+  padding: 13px 0 15px 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 3px;
+  background: #4285f4;
+  transition: 0.2s linear;
+  cursor: pointer;
+}
+.login__button:hover {
+  opacity: 0.8;
+}
+.login__text-container {
+  margin: 16px 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 6px;
+}
+.login__text {
+  margin: 0;
+  padding: 0;
+  color: #8b8b8b;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.login__link_type_register {
+  color: #4285f4;
+  text-decoration: none;
+  font-size: 14px;
+  font-style: normal;
+  line-height: normal;
+  transition: 0.2s linear;
+}
+.login__link_type_register:hover {
+  opacity: 0.7;
+}
+
+@media screen and (min-width: 425px) and (max-width: 768px) {
+  .login {
+    padding: 234px 0;
+  }
+}
+@media screen and (max-width: 424px) {
+  .login {
+    padding: 56px 0;
+  }
+  .login__container {
+    min-width: 260px;
+  }
+  .login__link {
+    align-self: center;
+    margin: 0 0 48px 0;
+  }
+  .login__title {
+    align-self: center;
+    margin: 0 0 79px 0;
+  }
+  .login__input-container {
+    align-self: center;
+  }
+  .login__form {
+    margin: 0 0 285px 0;
+  }
+  .login__button {
+    font-size: 12px;
+    padding: 15px 0 16px 0;
+  }
+  .login__text-container {
+    margin: 14px 0 0 0;
+  }
+  .login__text {
+    font-size: 12px;
+  }
+  .login__link_type_register {
+    font-size: 12px;
+  }
+}
