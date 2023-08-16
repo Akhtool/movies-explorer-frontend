@@ -12,6 +12,7 @@
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 70px;
+  background: none;
 }
 .header__link {
   transition: 0.2s linear;

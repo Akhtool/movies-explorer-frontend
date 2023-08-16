@@ -1,5 +1,5 @@
 .movies-card {
-  margin: 80px auto 103px auto;
+  margin: 80px auto 157px auto;
 }
 
 .movies-card__list {
@@ -18,9 +18,10 @@
   display: flex;
   justify-content: center;
   margin: 61px 0 0 0;
+  padding: 0 70px;
 }
 .movies-card__button {
-  width: 1140px;
+  width: 100%;
   height: 36px;
   border-radius: 6px;
   background-color: #2f2f2f;
@@ -39,6 +40,7 @@
 @media screen and (min-width: 321px) and (max-width: 768px) {
   .movies-card {
     padding: 0 30px 0 30px;
+    margin: 80px auto 103px auto;
   }
   .movies-card__list {
     grid-template-columns: repeat(auto-fit, 342px);
@@ -48,13 +50,14 @@
   }
   .movies-card__show-more {
     margin: 80px 0 0 0;
+    padding: 0;
   }
 }
 
 /* Стили для мобильных устройств (320px) */
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 400px) {
   .movies-card {
-    margin: 50px auto 99px auto;
+    margin: 50px auto 98px auto;
   }
   .movies-card__list {
     grid-template-columns: repeat(auto-fit, 300px);
@@ -68,5 +71,6 @@
   }
   .movies-card__show-more {
     margin: 80px 0 0 0;
+    padding: 0 11px;
   }
 }

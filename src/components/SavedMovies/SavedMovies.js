@@ -24,10 +24,8 @@ const SavedMovies = (props) => {
   }, [loggedIn]);
   return (
     <main>
-      <Header />
       <SearchForm />
       {isLoadind ? <Preloader /> : <MoviesCardList cardList={cards} />}
-      <Footer />
     </main>
   );
 };

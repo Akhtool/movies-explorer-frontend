@@ -1,5 +1,6 @@
 .footer {
-  padding: 55px 70px 20px 70px;
+  padding: 0 70px 0 70px;
+  margin: 0 0 20px 0;
 }
 .footer__title {
   margin: 0;

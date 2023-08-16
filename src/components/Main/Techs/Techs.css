@@ -44,6 +44,14 @@
   line-height: normal;
   letter-spacing: -0.56px;
 }
+/* @media screen and (min-width: 322px) and (max-width: 675px) {
+  .techs__list {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    gap: 10px;
+    margin: 50px 0 0 0;
+  }
+} */
 /* Стили для планшетов (768px) */
 @media screen and (min-width: 321px) and (max-width: 768px) {
   .techs {
@@ -70,7 +78,14 @@
   }
   .techs__list {
     margin: 82px 0 0 0;
+    flex-wrap: wrap;
   }
+  /* .techs__list {
+    display: grid;
+    grid-template-columns: 87px 87px;
+    gap: 10px;
+    margin: 82px 0 0 0;
+  } */
 }
 /* Стили для мобильных устройств (320px) */
 @media screen and (max-width: 320px) {

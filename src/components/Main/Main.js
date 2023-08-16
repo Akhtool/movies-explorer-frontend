@@ -18,14 +18,12 @@ const Main = () => {
   return (
     <>
       <main className="main">
-        <Header />
         <Promo />
         <AboutProject />
         <Techs />
         <AboutMe />
         <Portfolio />
       </main>
-      <Footer />
     </>
   );
 };

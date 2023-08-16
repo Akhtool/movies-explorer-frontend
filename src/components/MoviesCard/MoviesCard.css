@@ -69,7 +69,7 @@
 .card_button_type_saved:hover {
   opacity: 0.8;
 }
-.card_button_type_delete {
+.card__button_type_delete {
   background-color: #313131;
   background-image: url("../../images/card_button_type_delete.svg");
   background-position: center;

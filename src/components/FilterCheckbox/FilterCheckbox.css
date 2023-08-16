@@ -1,9 +1,9 @@
 .filter-checkbox {
-  box-sizing: border-box;
   display: flex;
-  width: 1140px;
+  width: 100%;
   height: 20px;
-  margin: 0 0 43px 0;
+  padding: 0 0 43px 0;
+  border-bottom: 1px solid rgba(170, 170, 170, 0.2);
 }
 .filter-checkbox__container {
   display: flex;
@@ -36,16 +36,20 @@
 /* Стили для планшетов (768px) */
 @media screen and (min-width: 321px) and (max-width: 768px) {
   .filter-checkbox {
-    width: 708px;
-    margin: 0 0 52px 0;
+    width: 100%;
+    padding: 0 0 50px 0;
   }
 }
 
 /* Стили для мобильных устройств (320px) */
 @media screen and (max-width: 320px) {
   .filter-checkbox {
-    width: 292px;
-    margin: 0 0 63px 0;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 63px 0;
+  }
+  .filter-checkbox__container {
+    gap: 12px;
   }
   .filter-checkbox__text {
     font-size: 11px;

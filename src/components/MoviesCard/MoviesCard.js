@@ -15,7 +15,11 @@ const MoviesCard = ({ name, duration, image }) => {
         <h2 className="card__title">{name}</h2>
         <p className="card__duration">{duration} минут</p>
       </div>
-      <img src={image} alt={name} className="card__image" />
+      <img
+        src={image}
+        alt={`Постер к фильму ${name}`}
+        className="card__image"
+      />
       <div className="card__footer">
         {location.pathname === "/movies" &&
           (isSaved ? (
@@ -29,7 +33,7 @@ const MoviesCard = ({ name, duration, image }) => {
             </button>
           ))}
         {location.pathname === "/saved-movies" && (
-          <button className="card__button card_button_type_delete"></button>
+          <button className="card__button card__button_type_delete"></button>
         )}
       </div>
     </li>

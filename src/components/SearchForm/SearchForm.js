@@ -7,7 +7,12 @@ const SearchForm = () => {
   return (
     <section className="search-form">
       <form className="search-form__container">
-        <input type="text" className="search-form__input" placeholder="Фильм" />
+        <input
+          type="text"
+          className="search-form__input"
+          placeholder="Фильм"
+          required
+        />
         <button className="search-form__button">Поиск</button>
       </form>
       <FilterCheckbox />

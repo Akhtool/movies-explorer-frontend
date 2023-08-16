@@ -18,7 +18,9 @@ const Header = (props) => {
   };
   return (
     <div
-      className={location.pathname === "/" ? "header" : "header_type_logged-in"}
+      className={
+        location.pathname === "/" ? "header" : "header header_type_logged-in"
+      }
     >
       <Link to="/" className="header__link">
         <img className="header__logo" src={logo} alt="Логотип" />
