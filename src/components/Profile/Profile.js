@@ -1,60 +1,167 @@
-import { Link } from "react-router-dom";
-import Header from "../Header/Header";
+import { useEffect, useRef, useState } from "react";
 import "./Profile.css";
-// Profile — компонент страницы изменения профиля.
-const Profile = (props) => {
-  const name = "Ибрагим";
-  const email = "pochta@yandex.ru";
+import { useCurrentUserContext } from "../../contexts/CurrentUserContextProvider";
+import { useNavigate } from "react-router-dom";
+import { mainApi } from "../../utils/MainApi";
+import { useFormWithValidation } from "../../hooks/useFormWithValidation";
+import {
+  MESSAGE_API_PROFILE_SUCCESS,
+  PATTERN_EMAIL,
+} from "../../constants/constants";
+
+const Profile = ({ setLoginStatus }) => {
+  const { currentUser, setCurrentUser } = useCurrentUserContext();
+  const [isSameValues, setIsSameValues] = useState(true);
+  const [apiMessage, setApiMessage] = useState("");
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormWithValidation();
+  const navigate = useNavigate();
+  const nameInputRef = useRef(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleMakeEditable = () => {
+    setIsEditing(true);
+    setApiMessage("");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    mainApi
+      .editUserData(values)
+      .then((updatedUserData) => {
+        setCurrentUser(updatedUserData);
+        setApiMessage(MESSAGE_API_PROFILE_SUCCESS);
+      })
+      .catch((error) => {
+        setApiMessage(error);
+      })
+      .finally(() => {
+        setIsSameValues(true);
+      });
+
+    setIsEditing(false);
+  };
+
+  useEffect(() => {
+    if (!isEditing) return;
+    nameInputRef.current.focus();
+  }, [isEditing]);
+
+  useEffect(() => {
+    if (!currentUser.name) return;
+    resetForm(false, { name: currentUser.name, email: currentUser.email });
+  }, [currentUser, resetForm]);
+
+  const handleLogout = () => {
+    mainApi
+      .logoutUser()
+      .then(() => {
+        setCurrentUser({ name: "", email: "" });
+        localStorage.removeItem("currentId");
+        localStorage.removeItem("search");
+        localStorage.removeItem("token");
+        setLoginStatus(false);
+        navigate("/", { replace: true });
+      })
+      .catch(() => {
+        setCurrentUser({ name: "", email: "" });
+        localStorage.removeItem("currentId");
+        localStorage.removeItem("search");
+        localStorage.removeItem("token");
+        setLoginStatus(false);
+        navigate("/", { replace: true });
+      });
+  };
+
+  useEffect(() => {
+    if (
+      currentUser.name === values.name &&
+      currentUser.email === values.email
+    ) {
+      setIsSameValues(true);
+    } else {
+      setIsSameValues(false);
+    }
+  }, [currentUser, values]);
+
   return (
-    <main className="profile">
-      <h2 className="profile__title">{`Привет, ${name}!`}</h2>
+    <main className="profile container">
+      <h1 className="profile__title">{`Привет, ${currentUser.name}!`}</h1>
       <form
-        id="profile__form"
+        name="profile__form"
         className="profile__form"
-        //   onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
+        noValidate
       >
         <label className="profile__input-container">
-          <span className="profile__input-label">Имя</span>
-          <input
-            type="text"
-            name="profile-input-name"
-            id="profile-input-name"
-            className="profile__input"
-            placeholder="Имя"
-            value={name}
-            //   onChange={handleChange}
-            minLength={2}
-            maxLength={30}
-            required={true}
-          />
+          <div className="profile__input-wrapper">
+            <span className="profile__input-label">Имя</span>
+            <input
+              ref={nameInputRef}
+              disabled={!isEditing}
+              autoComplete="off"
+              required
+              type="text"
+              name="name"
+              className="profile__input"
+              placeholder="Укажите имя"
+              value={values.name || ""}
+              onChange={handleChange}
+              minLength={2}
+              maxLength={30}
+            />
+          </div>
+          <span className="profile__error">{errors.name}</span>
         </label>
-        <span className="profile__brake-line" />
         <label className="profile__input-container">
-          <span className="profile__input-label">E-mail</span>
-          <input
-            type="email"
-            name="profile-input-email"
-            id="profile-input-email"
-            className="profile__input"
-            placeholder="E-mail"
-            value={email}
-            //   onChange={handleChange}
-            required={true}
-          />
+          <div className="profile__input-wrapper">
+            <span className="profile__input-label">E-mail</span>
+            <input
+              disabled={!isEditing}
+              autoComplete="off"
+              required
+              type="email"
+              name="email"
+              className="profile__input"
+              placeholder="Укажите почту"
+              value={values.email || ""}
+              onChange={handleChange}
+              pattern={PATTERN_EMAIL}
+            />
+          </div>
+          <span className="profile__error">{errors.email}</span>
         </label>
+
+        <span className="profile__api-error">{apiMessage}</span>
+
+        {isEditing ? (
+          <button
+            type="submit"
+            className="profile__submit"
+            disabled={isSameValues || !isValid}
+          >
+            Сохранить
+          </button>
+        ) : (
+          <div className="profile__buttons">
+            <button
+              type="button"
+              className="profile__button profile__button_type_edit"
+              onClick={handleMakeEditable}
+            >
+              Редактировать
+            </button>
+            <button
+              type="button"
+              className="profile__button profile__button_type_logout"
+              onClick={handleLogout}
+            >
+              Выйти из аккаунта
+            </button>
+          </div>
+        )}
       </form>
-      <div className="profile__btn-container">
-        <button
-          type="submit"
-          form="profile__form"
-          className="profile__btn-submit"
-        >
-          Редактировать
-        </button>
-        <Link to="/" className="profile__btn-exit">
-          Выйти из аккаунта
-        </Link>
-      </div>
     </main>
   );
 };

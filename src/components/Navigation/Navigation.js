@@ -1,46 +1,40 @@
-import { NavLink, useLocation } from "react-router-dom";
-import "./Navigation.css";
+import { useState } from 'react';
+import Burger from './Burger/Burger';
+import BurgerMenu from './BurgerMenu/BurgerMenu';
+import LoggedUserNavigation from './LoggedUserNavigation/LoggedUserNavigation';
+import LoginRegisterMenu from './LoginRegisterMenu/LoginRegisterMenu';
+import './Navigation.css';
 
-const Navigation = (props) => {
-  const location = useLocation();
-  const isActiveLink = (path) => {
-    return location.pathname === path ? "navigation__link_active" : "";
-  };
+const Navigation = ({ isLogged, isBurger = true }) => {
+  const [isBurgerOpened, setIsBurgerOpened] = useState(false);
+
+  const handleOpenBurgerMenu = () => {
+    setIsBurgerOpened(true);
+  }
+
+  const handleCloseBurgerMenu = () => {
+    setIsBurgerOpened(false);
+  }
+
   return (
-    <nav className={`navigation ${props.isOpen ? "navigation_opened" : ""}`}>
-      <div className="navigation__overlay"></div>
-      <button className="navigation__close" onClick={props.onClose}></button>
-      <NavLink
-        to="/"
-        className={`navigation__link ${isActiveLink("/")}`}
-        onClick={props.onClose}
-      >
-        Главная
-      </NavLink>
-      <NavLink
-        to="/movies"
-        className={`navigation__link ${isActiveLink("/movies")}`}
-        onClick={props.onClose}
-      >
-        Фильмы
-      </NavLink>
-      <NavLink
-        to="/saved-movies"
-        className={`navigation__link ${isActiveLink("/saved-movies")}`}
-        onClick={props.onClose}
-      >
-        Сохраненные фильмы
-      </NavLink>
-      <NavLink
-        to="/profile"
-        className="navigation__link"
-        onClick={props.onClose}
-      >
-        Аккаунт
-        <div className="navigation__link-user"></div>
-      </NavLink>
+    <nav className={isLogged && !isBurger ? "navigation navigation_logged" : "navigation"}>
+
+    {
+      isLogged
+        ? <>
+          <Burger onClick={handleOpenBurgerMenu}/>
+          <LoggedUserNavigation />
+        </>
+        : <LoginRegisterMenu />
+    }
+
+    <BurgerMenu
+      isOpened={isBurgerOpened}
+      closeBurger={handleCloseBurgerMenu}
+    />
+
     </nav>
-  );
+  )
 };
 
 export default Navigation;

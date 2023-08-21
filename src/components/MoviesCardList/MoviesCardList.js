@@ -1,29 +1,40 @@
-import "./MoviesCardList.css";
-import MoviesCard from "../MoviesCard/MoviesCard";
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import MoviesCard from '../MoviesCard/MoviesCard';
+import './MoviesCardList.css'
 // MoviesCardList — компонент, который управляет отрисовкой карточек фильмов на страницу и их количеством.
-const MoviesCardList = ({ cardList }) => {
-  const location = useLocation();
+const MoviesCardList = ({ moviesData, isAlreadySeached }) => {
+  const { pathname } = useLocation();
+
   return (
-    <section className="movies-card">
-      <ul className="movies-card__list">
-        {cardList.map((card) => (
-          <MoviesCard
-            key={card.movieId}
-            movieId={card.movieId}
-            duration={card.duration}
-            image={card.image}
-            name={card.nameRU}
-          />
-        ))}
-      </ul>
-      {location.pathname !== "/saved-movies" && (
-        <div className="movies-card__show-more">
-          <button className="movies-card__button">Еще</button>
-        </div>
-      )}
+    <section className="movies-section">
+      {
+        moviesData.length > 0
+          ? <ul className="movies-list">
+              {
+                moviesData.map((movie) => (
+                  <MoviesCard
+                    key={
+                      pathname === "/movies"
+                        ? movie.id
+                        : movie._id
+                    }
+                    movieData={movie}
+                  />
+                ))
+              }
+            </ul>
+          : <span
+              className="movies-section__empty"
+            >
+              {
+                isAlreadySeached
+                  ? "Ничего не найдено"
+                  : ""
+              }
+            </span>
+      }
     </section>
-  );
+  )
 };
 
 export default MoviesCardList;

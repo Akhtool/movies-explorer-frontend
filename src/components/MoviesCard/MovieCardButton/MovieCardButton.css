@@ -1,0 +1,26 @@
+.movie-card__button {
+  width: 100px;
+  height: 29px;
+  margin: 18px auto 18px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 11px;
+  color: #fff;
+  background-color: #2f2f2f;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.2s ease-out;
+}
+
+.movie-card__button_type_like {
+  background-color: #ee3465;
+  background-image: url('../../../images/save.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.movie-card__button:hover {
+  opacity: .8;
+}
