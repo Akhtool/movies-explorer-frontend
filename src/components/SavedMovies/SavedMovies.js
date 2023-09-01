@@ -1,77 +1,77 @@
-import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import SearchForm from '../SearchForm/SearchForm';
-import './SavedMovies.css';
-import { useEffect, useState } from 'react';
-import Preloader from '../Preloader/Preloader';
-import { mainApi } from '../../utils/MainApi';
-import { movieFilter } from '../../utils/utils';
-import { useSavedMoviesContext } from '../../contexts/SavedMoviesContextProvider';
-import Modal from '../Modal/Modal';
-import ModalContent from '../Modal/ModalContent';
+import { useCallback, useContext, useEffect, useState } from "react";
+import MoviesCardList from "../MoviesCardList/MoviesCardList";
+import Preloader from "../Preloader/Preloader";
+import SearchForm from "../SearchForm/SearchForm";
+import auth from '../../utils/MainApi';
+import { Context } from '../../context/Context';
+
 // SavedMovies — компонент страницы с сохранёнными карточками фильмов. Пригодятся эти компоненты:
 // MoviesCardList — компонент, который управляет отрисовкой карточек фильмов на страницу и
 // их количеством.
 // MoviesCard — компонент одной карточки фильма.
-
 const SavedMovies = () => {
   const [isLoadind, setIsLoading] = useState(false);
-  const { savedMovies, setSavedMovies } = useSavedMoviesContext();
-  const [searchedSavedMovies, setSearchedSavedMovies] = useState([]);
-  const [searchParams, setSearchParams] = useState({querry: '', includeShorts: false, alreadySeached: false});
-  const [isModalOpened, setIsModalOpened] = useState(false);
-  const [modalText, setModalText] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [error, setError] = useState('');
+  const [isShort, setIsShort] = useState(false);
+  const { savedMovies } = useContext(Context);
+  const [cards, setCards] = useState([])
 
-  const handleModalClose = () => {
-    setIsModalOpened(false);
-    setModalText('');
+  const handleSearchMovies = (e) => {
+    setSearchValue(e.target.value);
   }
 
-  useEffect(() => {
+  const getIsShort = (e) => {
+    setIsShort(e.target.checked);
+
+    if (e.target.checked) {
+      savedMovies.setSavedMovies(savedMovies.savedMovies.filter((movie) => {
+        return movie.duration <= 40
+      }))
+    } else {
+      savedMovies.setSavedMovies(cards)
+    }
+  }
+
+  const handleSearchClick = (e) => {
+    e.preventDefault()
     setIsLoading(true);
-    mainApi.getSavedMovies()
-      .then(res => {
-        setSavedMovies(res);
-      })
-      .catch(err => {
-        setIsModalOpened(true);
-        setModalText(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
-  }, [setSavedMovies])
 
-  const handleSearchSubmit = (evt) => {
-    evt.preventDefault();
-    const {querry, shorts} = evt.target.elements;
-    const currentSearch = {querry: querry.value, includeShorts: shorts.checked, alreadySeached: true};
-    setSearchParams(currentSearch);
+    auth.getSavedMovies()
+      .then((res) => {
+        savedMovies.setSavedMovies(res.filter((movie) => {
+          return movie.nameRU.toLowerCase().includes(searchValue.toLowerCase()) || movie.nameEN.toLowerCase().includes(searchValue.toLowerCase())
+        }));
+
+        setIsLoading(false)
+      })
+      .catch((err) => {
+        setIsLoading(false)
+        setError(err);
+      })
+
+    setIsLoading(false);
   }
 
   useEffect(() => {
-    const currentSearchedMovies = savedMovies.filter(movie => movieFilter(movie, searchParams));
-    setSearchedSavedMovies(currentSearchedMovies);
-  }, [searchParams, savedMovies])
+    auth.getSavedMovies().then((res) => {
+      if (res) {
+        setIsLoading(false);
+        savedMovies.setSavedMovies(res);
+        setCards(res);
+      }
+    }).catch((err) => {
+      setError(err);
+    })
+  }, [])
+
 
   return (
-    <main className="saved-movies container">
-
-      <Modal isOpen={isModalOpened}>
-        <ModalContent onClose={handleModalClose} modalText={modalText} />
-      </Modal>
-
-      <SearchForm
-        searchParams={searchParams}
-        handleSubmit={handleSearchSubmit}
-        setSearchParams={setSearchParams}
-        isRequired={false}
-      />
-      {isLoadind
-        ? <Preloader />
-        : <MoviesCardList moviesData={searchedSavedMovies} isAlreadySeached={searchParams.alreadySeached} />
-      }
+    <main>
+      <SearchForm isShort={isShort} getIsShort={getIsShort} value={searchValue} setValue={handleSearchMovies} handleSearchClick={handleSearchClick} />
+      {isLoadind ? <Preloader /> : <MoviesCardList isSaved={true} error={error} cards={savedMovies.savedMovies} />}
     </main>
-  )
+  );
 };
 
 export default SavedMovies;

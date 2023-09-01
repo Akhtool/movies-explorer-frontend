@@ -1,153 +1,129 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useFormWithValidation } from "../../hooks/useFormWithValidation";
+import React from 'react';
 import "./Register.css";
-import Logo from "../Logo/Logo";
-import { mainApi } from "../../utils/MainApi";
-import { useCurrentUserContext } from "../../contexts/CurrentUserContextProvider";
-import { useState } from "react";
-import Preloader from "../Preloader/Preloader";
-import { PATTERN_EMAIL } from "../../constants/constants";
-
-const Register = ({ setLoginStatus }) => {
-  const { values, handleChange, errors, isValid, resetForm, inputVilidities } =
-    useFormWithValidation();
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../images/header__logo.svg";
+import auth from '../../utils/MainApi';
+import Preloader from '../Preloader/Preloader';
+// Register — компонент страницы регистрации.
+const Register = ({ setSavedMovies, setCurrentUserData }) => {
   const navigate = useNavigate();
-  const { setCurrentUser } = useCurrentUserContext();
-  const [apiErrorMessage, setApiErrorMessage] = useState("");
-  const [isLoadind, setIsLoading] = useState(false);
-  const defaultRegisterInputClassName = "register__input";
-  const errorRegisterInputClassName =
-    "register__input register__input_type_error";
 
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-    setApiErrorMessage("");
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
+  const [nameError, setNameError] = React.useState('');
+  const [emailError, setEmailError] = React.useState('');
+  const [passwordError, setPasswordError] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleSubmit = () => {
     setIsLoading(true);
-    mainApi
-      .signup(values)
-      .then(() => {
-        const { email, password } = values;
-        resetForm();
-        return mainApi.signin({ email, password });
-      })
-      .then((userData) => {
-        setCurrentUser(userData);
-        setLoginStatus(true);
-        localStorage.setItem("token", userData.token);
-        localStorage.setItem("currentId", userData._id);
-        navigate("/movies", { replace: true });
-      })
-      .then(() => {
-        mainApi.reEnter().then((userData) => {
-          setCurrentUser(userData);
+    if (!nameError && !emailError && !passwordError) {
+      auth.register({ name, email, password })
+        .then((res) => {
+          setCurrentUserData({
+            name: res.name,
+            email: res.email
+          })
+
+          auth.login({ email, password }).then((res) => {
+            if (res.token) {
+              localStorage.setItem('token', res.token);
+              navigate('/movies', { replace: true })
+            }
+          })
+
+          setSavedMovies([])
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
-      })
-      .catch((err) => {
-        setApiErrorMessage(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+    }
+  }
+
+  const handleChangeName = (target) => {
+    setName(target.value);
+    setNameError(target.validationMessage);
+  }
+
+  const handleChangeEmail = (target) => {
+    setEmail(target.value);
+    setEmailError(target.validationMessage);
+  }
+
+  const handleChangePassword = (target) => {
+    setPassword(target.value);
+    setPasswordError(target.validationMessage);
+  }
+
+  const disabled = !name || !email || !password || nameError || emailError || passwordError || isLoading;
 
   return (
-    <main className="register container">
-      <Logo />
-      <h1 className="register__title">Добро пожаловать!</h1>
-      <form
-        action="#"
-        className="register__form"
-        name="register"
-        noValidate
-        onSubmit={handleSubmit}
-      >
-        <label htmlFor="name" className="register__field">
-          Имя
-          <input
-            type="text"
-            className={
-              inputVilidities.name === undefined || inputVilidities.name
-                ? defaultRegisterInputClassName
-                : errorRegisterInputClassName
-            }
-            name="name"
-            required
-            id="name"
-            autoComplete="off"
-            minLength="2"
-            maxLength="40"
-            onChange={handleChange}
-            value={values.name || ""}
-          />
-          <span className="register__error">{errors.name}</span>
-        </label>
-        <label htmlFor="email" className="register__field">
-          E-mail
-          <input
-            type="email"
-            className={
-              inputVilidities.email === undefined || inputVilidities.email
-                ? defaultRegisterInputClassName
-                : errorRegisterInputClassName
-            }
-            name="email"
-            required
-            id="email"
-            autoComplete="off"
-            minLength="2"
-            maxLength="40"
-            onChange={handleChange}
-            value={values.email || ""}
-            pattern={PATTERN_EMAIL}
-          />
-          <span className="register__error">{errors.email}</span>
-        </label>
-        <label htmlFor="password" className="register__field">
-          Пароль
-          <input
-            type="password"
-            className={
-              inputVilidities.password === undefined || inputVilidities.password
-                ? defaultRegisterInputClassName
-                : errorRegisterInputClassName
-            }
-            name="password"
-            required
-            id="password"
-            autoComplete="off"
-            minLength="2"
-            maxLength="200"
-            onChange={handleChange}
-            value={values.password || ""}
-          />
-          <span className="register__error">{errors.password}</span>
-        </label>
-
-        <span className="register__api-error">{apiErrorMessage}</span>
-
-        {isLoadind ? (
-          <Preloader />
-        ) : (
-          <button
-            className={
-              isValid
-                ? "register__submit"
-                : "register__submit register__submit_disabled"
-            }
-            type="submit"
-            disabled={!isValid}
-          >
-            Зарегистрироваться
-          </button>
-        )}
-        <p className="register__text">
-          Уже зарегистрированы?{" "}
-          <Link to="/signin" className="register__link">
-            Войти
+    <main>
+      <section className="register">
+        <div className="register__container">
+          <Link to="/" className="register__link">
+            <img className="register__logo" src={logo} alt="Логотип" />
           </Link>
-        </p>
-      </form>
+          <h2 className="register__title">Добро пожаловать!</h2>
+          <form className="register__form">
+            <div className="register__input-container">
+              <label className="register__input-label">Имя</label>
+              <input
+                type="text"
+                className="register__input register__input_type_name"
+                required
+                minLength={2}
+                maxLength={30}
+                value={name}
+                onChange={(e) => handleChangeName(e.target)}
+              />
+
+              <span className="register__input-error">{nameError}</span>
+            </div>
+            <div className="register__input-container">
+              <label className="register__input-label">E-mail</label>
+              <input
+                type="email"
+                className="register__input register__input_type_email"
+                required
+                value={email}
+                onChange={(e) => handleChangeEmail(e.target)}
+              />
+              <span className="register__input-error">{emailError}</span>
+            </div>
+            <div className="register__input-container">
+              <label className="register__input-label">Пароль</label>
+              <input
+                type="password"
+                className={`register__input ${passwordError ? 'register__input_type_password' : ''}`}
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => handleChangePassword(e.target)}
+              />
+              <span className="register__input-error">
+                {passwordError}
+              </span>
+            </div>
+          </form>
+          {isLoading && <Preloader />}
+          <button onClick={handleSubmit} disabled={disabled} className={`${disabled ? 'register__button register__button_disabled' : 'register__button'}`}>Зарегистрироваться</button>
+          <div className="register__text-container">
+            <p className="register__text">Уже зарегистрированы?</p>
+            <Link
+              to="/signin"
+              className="register__link register__link_type_login"
+            >
+              Войти
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 };

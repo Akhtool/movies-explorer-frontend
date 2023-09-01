@@ -1,166 +1,108 @@
-import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import SearchForm from '../SearchForm/SearchForm';
-import './Movies.css';
-import { useEffect, useState } from 'react';
-import Preloader from '../Preloader/Preloader';
+import SearchForm from "../SearchForm/SearchForm";
+import Preloader from "../Preloader/Preloader";
+import MoviesCardList from "../MoviesCardList/MoviesCardList";
+import { useEffect, useState } from "react";
 import { moviesApi } from '../../utils/MoviesApi';
-import { getCardsAmount, movieFilter } from '../../utils/utils';
-import { useDebouncedFunction } from '../../hooks/useDebouncedFunction';
-import { useSavedMoviesContext } from '../../contexts/SavedMoviesContextProvider';
-import { mainApi } from '../../utils/MainApi';
-import Modal from '../Modal/Modal';
-import ModalContent from '../Modal/ModalContent';
+import { useResize } from '../../hooks/useResize';
 // Movies — компонент страницы с поиском по фильмам. В нём пригодятся эти компоненты:
 // SearchForm — форма поиска, куда пользователь будет вводить запрос. Обратите внимание на фильтр с чекбоксом «Только короткометражки». Для него можно воспользоваться отдельным управляемым компонентом FilterCheckbox.
 // Preloader — отвечает за работу прелоадера.
 // MoviesCardList — компонент, который управляет отрисовкой карточек фильмов на страницу и их количеством.
 // MoviesCard — компонент одной карточки фильма.
-
-
 const Movies = () => {
   const [isLoadind, setIsLoading] = useState(false);
-  const [allMovies, setAllMovies] = useState([]);
-  const [displayedMovies, setDisplayedMovies] = useState([]);
-  const [cardsAmount, setCardsAmount] = useState(getCardsAmount());
-  const [isMoveButtonVisible, setIsMoveButtonVisible] = useState(true);
-  const [searchParams, setSearchParams] = useState({querry: '', includeShorts: false, alreadySeached: false});
-  const [serachedMovies, setSearchedMovies] = useState([]);
-  const { setSavedMovies } = useSavedMoviesContext();
-  const [isModalOpened, setIsModalOpened] = useState(false);
-  const [modalText, setModalText] = useState('');
-  const [isEmptyQuerry, setIsEmptyQuerry] = useState(false);
+  const [cards, setCards] = useState([]);
+  const [updateCards, setUpdateCards] = useState([])
+  const [searchValue, setSearchValue] = useState('');
+  const [moviesAmount, setMoviesAmount] = useState(12);
+  const [error, setError] = useState('');
+  const [isShort, setIsShort] = useState(false);
+  const [response, setResponse] = useState([]);
 
-  const handleModalClose = () => {
-    setIsModalOpened(false);
-    setModalText('');
+  const resize = useResize();
+
+  const handleSearchMovies = (e) => {
+    setSearchValue(e.target.value);
+    localStorage.setItem('searchValue', e.target.value);
   }
 
   useEffect(() => {
-    setIsLoading(true);
-    mainApi.getSavedMovies()
-      .then(res => {
-        setSavedMovies(res);
+    moviesApi.getMovies()
+      .then((res) => {
+        setResponse(res);
+        if (!searchValue) {
+          setError('Нужно ввести ключевое слово');
+        }
       })
-      .catch(err => {
-        setIsModalOpened(true);
-        setModalText(err);
+      .catch((err) => {
+        setError(err);
       })
-      .finally(() => {
-        setIsLoading(false);
-      })
-  }, [setSavedMovies])
 
-  const handleResize = () => {
-    setCardsAmount(getCardsAmount());
+    if (localStorage.getItem('movies')) {
+      setCards(JSON.parse(localStorage.getItem('movies')).slice(0, resize ? 5 : 12))
+      setUpdateCards(JSON.parse(localStorage.getItem('movies')))
+      setSearchValue(localStorage.getItem('searchValue'));
+    }
+  }, [resize])
+
+  const getIsShort = (e) => {
+    setIsShort(e.target.checked);
+
+    if (e.target.checked) {
+      setCards(updateCards.filter((movie) => {
+        return movie.duration <= 40 && (movie.nameRU.toLowerCase().includes(searchValue.toLowerCase()) || movie.nameEN.toLowerCase().includes(searchValue.toLowerCase()))
+      }))
+    } else {
+      setCards(updateCards.filter((movie) => {
+        return movie.nameRU.toLowerCase().includes(searchValue.toLowerCase()) || movie.nameEN.toLowerCase().includes(searchValue.toLowerCase())
+      }))
+    }
   }
 
-  const debouncedResize = useDebouncedFunction(handleResize);
-
-  useEffect(() => {
-    window.addEventListener('resize', debouncedResize);
-
-    return () => window.removeEventListener('resize', debouncedResize);
-  }, [debouncedResize]);
-
-
-  useEffect(() => {
-    const search = JSON.parse(localStorage.getItem('search'));
-    if (search) setSearchParams(search);
-
-    const storageMovies = JSON.parse(localStorage.getItem('movies'));
-    if (storageMovies) {
-      setAllMovies(storageMovies);
+  const handleGetMore = () => {
+    if (resize) {
+      setMoviesAmount((prev) => prev + 2);
+      setCards([...cards, ...updateCards.slice(moviesAmount, moviesAmount + 2)])
+      return;
+    } else {
+      setMoviesAmount((prev) => prev + 3);
+      setCards([...cards, ...updateCards.slice(moviesAmount, moviesAmount + 3)])
       return;
     }
+  }
 
+  const handleSearchClick = (e) => {
+    e.preventDefault()
     setIsLoading(true);
-    moviesApi.getAllMovies()
-      .then(movies => {
-        setAllMovies(movies);
-        localStorage.setItem('movies', JSON.stringify(movies));
-      })
-      .catch(err => {
-        setIsModalOpened(true);
-        setModalText(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
-  }, [])
 
-  useEffect(() => {
-    setDisplayedMovies(serachedMovies.slice(0, cardsAmount.totalCards));
-  }, [cardsAmount, serachedMovies])
+    // if (!searchValue) {
+    //   setError('Нужно ввести ключевое слово');
+    //   setIsLoading(false);
+    //   return;
+    // }
 
-  const handleMoreMovies = () => {
-    const moviesToShow = serachedMovies.slice(displayedMovies.length, displayedMovies.length + cardsAmount.extraCards);
+    if (searchValue) {
+      setCards(response.filter((movie) => {
+        return movie.nameRU.toLowerCase().includes(searchValue.toLowerCase()) || movie.nameEN.toLowerCase().includes(searchValue.toLowerCase())
+      }).slice(0, resize ? 5 : 12));
 
-    setDisplayedMovies([...displayedMovies, ...moviesToShow]);
-  }
+      setUpdateCards(response.filter((movie) => {
+        return movie.nameRU.toLowerCase().includes(searchValue.toLowerCase()) || movie.nameEN.toLowerCase().includes(searchValue.toLowerCase())
+      }))
 
-  useEffect(() => {
-    setIsMoveButtonVisible(displayedMovies.length < serachedMovies.length);
-  }, [displayedMovies, serachedMovies])
-
-  const handleSearchSubmit = (evt) => {
-    evt.preventDefault();
-    const {querry, shorts} = evt.target.elements;
-
-    if (!querry.value) {
-      setIsEmptyQuerry(true);
-      return;
+      localStorage.setItem('movies', JSON.stringify(response.filter((movie) => {
+        return movie.nameRU.toLowerCase().includes(searchValue.toLowerCase()) || movie.nameEN.toLowerCase().includes(searchValue.toLowerCase())
+      })))
     }
-
-    setIsEmptyQuerry(false);
-
-    const currentSearch = {querry: querry.value, includeShorts: shorts.checked, alreadySeached: true};
-    localStorage.setItem('search', JSON.stringify(currentSearch));
-    setSearchParams(currentSearch);
+    setIsLoading(false);
   }
-
-  useEffect(() => {
-    if (!searchParams.querry) return;
-
-    const currentSearchedMovies = allMovies.filter(movie => movieFilter(movie, searchParams));
-    setSearchedMovies(currentSearchedMovies);
-  }, [searchParams, allMovies])
 
   return (
-    <main className="movies container">
-
-      <Modal isOpen={isModalOpened}>
-        <ModalContent onClose={handleModalClose} modalText={modalText} />
-      </Modal>
-
-      <SearchForm
-        searchParams={searchParams}
-        handleSubmit={handleSearchSubmit}
-        setSearchParams={setSearchParams}
-        isEmptyQuerry={isEmptyQuerry}
-      />
-
-      {isLoadind
-        ? <Preloader />
-        : <MoviesCardList
-            moviesData={displayedMovies}
-            isAlreadySeached={searchParams.alreadySeached}
-          />
-      }
-
-      {
-        isMoveButtonVisible
-          ? <button
-              className="movies__more"
-              type="button"
-              onClick={handleMoreMovies}
-            >
-              Ещё
-            </button>
-          : null
-      }
-
+    <main>
+      <SearchForm isShort={isShort} getIsShort={getIsShort} value={searchValue} setValue={handleSearchMovies} handleSearchClick={handleSearchClick} />
+      {isLoadind ? <Preloader /> : <MoviesCardList updateCards={updateCards} error={error} cards={cards} isSaved={false} handleGetMore={handleGetMore} />}
     </main>
-  )
+  );
 };
 
 export default Movies;

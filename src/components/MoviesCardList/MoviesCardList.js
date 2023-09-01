@@ -1,40 +1,30 @@
-import { useLocation } from 'react-router-dom';
-import MoviesCard from '../MoviesCard/MoviesCard';
-import './MoviesCardList.css'
-// MoviesCardList — компонент, который управляет отрисовкой карточек фильмов на страницу и их количеством.
-const MoviesCardList = ({ moviesData, isAlreadySeached }) => {
-  const { pathname } = useLocation();
+import "./MoviesCardList.css";
+import MoviesCard from "../MoviesCard/MoviesCard";
 
+// MoviesCardList — компонент, который управляет отрисовкой карточек фильмов на страницу и их количеством.
+const MoviesCardList = ({ isSaved, updateCards = [], error, cards, handleGetMore }) => {
   return (
-    <section className="movies-section">
-      {
-        moviesData.length > 0
-          ? <ul className="movies-list">
-              {
-                moviesData.map((movie) => (
-                  <MoviesCard
-                    key={
-                      pathname === "/movies"
-                        ? movie.id
-                        : movie._id
-                    }
-                    movieData={movie}
-                  />
-                ))
-              }
-            </ul>
-          : <span
-              className="movies-section__empty"
-            >
-              {
-                isAlreadySeached
-                  ? "Ничего не найдено"
-                  : ""
-              }
-            </span>
+    <section className="movies-card">
+      {!!cards.length ?
+        <>
+          <ul className="movies-card__list">
+            {cards.map((card) => (
+              <MoviesCard
+                key={isSaved ? card._id : card.id}
+                card={card}
+                movieId={card.movieId}
+                duration={card.duration}
+                image={isSaved ? card.image : `https://api.nomoreparties.co${card.image.url}`}
+                name={card.nameRU} />
+            ))}
+          </ul>
+          {isSaved ? '' : updateCards.length === cards.length ? '' : <div className="movies-card__show-more">
+            <button onClick={handleGetMore} className="movies-card__button">Еще</button>
+          </div>}
+        </> : isSaved ? '' : <span className="movies-card__error"> {error ? error : ''}</span>
       }
     </section>
-  )
+  );
 };
 
 export default MoviesCardList;

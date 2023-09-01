@@ -1,117 +1,85 @@
-const mainApiOptions = {
-  baseUrl: "https://api.akhtool.movies.nomoredomains.xyz",
-  headers: {
-    "Content-Type": "application/json",
-  },
-};
-
 class MainApi {
-  constructor(options) {
-    this._baseUrl = options.baseUrl;
-    this._headers = options.headers;
+  constructor({ baseUrl, headers }) {
+    this._baseUrl = baseUrl;
+    this._headers = headers;
   }
 
-  // Проверяем статус ответа сервера:
-  _checkResponseStatus(response) {
-    return response.ok
-      ? response.json()
-      : response.json().then((err) => Promise.reject(err.message));
+  _getResponseData(res) {
+    if (!res.ok) {
+      return Promise.reject(`Ошибка: ${res.status}`);
+    }
+    return res.json();
   }
 
-  async signup(userData) {
-    const res = await fetch(`${this._baseUrl}/signup`, {
+  register(newUserData) {
+    return fetch(`${this._baseUrl}/signup`, {
       method: "POST",
       headers: this._headers,
-      body: JSON.stringify(userData),
-    });
-    return this._checkResponseStatus(res);
+      body: JSON.stringify({
+        email: newUserData.email,
+        name: newUserData.name,
+        password: newUserData.password,
+      }),
+    }).then(this._getResponseData);
   }
 
-  async signin(userData) {
-    const res = await fetch(`${this._baseUrl}/signin`, {
+  login(userData) {
+    return fetch(`${this._baseUrl}/signin`, {
       method: "POST",
-      credentials: "include",
       headers: this._headers,
-      body: JSON.stringify(userData),
-    });
-    return this._checkResponseStatus(res);
+      body: JSON.stringify({
+        email: userData.email,
+        password: userData.password,
+      }),
+    }).then(this._getResponseData);
   }
 
-  async reEnter() {
-    const res = await fetch(`${this._baseUrl}/users/me`, {
+  refreshUserData() {
+    return fetch(`${this._baseUrl}/users/me`, {
       method: "GET",
-      credentials: "include",
-
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    return this._checkResponseStatus(res);
+      headers: this._headers,
+    }).then(this._getResponseData);
   }
 
-  async editUserData(userData) {
-    const res = await fetch(`${this._baseUrl}/users/me`, {
+  editProfile(data) {
+    return fetch(`${this._baseUrl}/users/me`, {
       method: "PATCH",
-      credentials: "include",
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(userData),
-    });
-    return this._checkResponseStatus(res);
+      headers: this._headers,
+      body: JSON.stringify(data),
+    }).then(this._getResponseData);
   }
 
-  async logoutUser() {
-    const res = await fetch(`${this._baseUrl}/signout`, {
+  getSavedMovies() {
+    return fetch(`${this._baseUrl}/movies`, {
       method: "GET",
-      credentials: "include",
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    return this._checkResponseStatus(res);
+      headers: this._headers,
+    }).then(this._getResponseData);
   }
 
-  // Фильмы
-  async getSavedMovies() {
-    const res = await fetch(`${this._baseUrl}/movies`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    return this._checkResponseStatus(res);
-  }
-
-  async saveMovie(movieData) {
-    const res = await fetch(`${this._baseUrl}/movies`, {
+  saveMovie(data) {
+    return fetch(`${this._baseUrl}/movies`, {
       method: "POST",
-      credentials: "include",
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(movieData),
-    });
-    return this._checkResponseStatus(res);
+      headers: this._headers,
+      body: JSON.stringify(data),
+    }).then(this._getResponseData);
   }
 
-  async deleteMovie(movieId) {
-    const res = await fetch(`${this._baseUrl}/movies/${movieId}`, {
+  deleteMovie(data) {
+    return fetch(`${this._baseUrl}/movies/${data}`, {
       method: "DELETE",
-      credentials: "include",
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    return this._checkResponseStatus(res);
+      headers: this._headers,
+
+      // body: JSON.stringify(data),
+    }).then(this._getResponseData);
   }
 }
 
-export const mainApi = new MainApi(mainApiOptions);
+const auth = new MainApi({
+  baseUrl: "https://api.akhtool.movies.nomoredomains.xyz",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem("token") || ''}`,
+  },
+});
+
+export default auth;

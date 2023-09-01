@@ -1,17 +1,10 @@
 import "./FilterCheckbox.css";
 
-const FilterCheckbox = ({ checkHandler, isChecked }) => {
+const FilterCheckbox = ({ getIsShort, isShort }) => {
   return (
     <div className="filter-checkbox">
       <div className="filter-checkbox__container">
-        
-        <input
-          type="checkbox"
-          name="shorts"
-          className="filter-checkbox__input"
-          checked={isChecked}
-          onChange={checkHandler}
-        />
+        <input value={isShort} type="checkbox" onChange={(e) => getIsShort(e)} className="filter-checkbox__input filter-checkbox__active" />
         <span className="filter-checkbox__text">Короткометражки</span>
       </div>
     </div>

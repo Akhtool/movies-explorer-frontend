@@ -6,7 +6,7 @@ const NotFoundPage = () => {
   const navigate = useNavigate();
   useEffect(() => {
     setTimeout(() => {
-      navigate(-1);
+      navigate(-1, { replace: true });
     }, 2000);
   }, [navigate]);
   return (

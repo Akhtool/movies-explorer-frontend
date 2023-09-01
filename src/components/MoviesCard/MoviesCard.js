@@ -1,106 +1,85 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { MOVIES_IMAGES_BASE_URL } from '../../constants/constants';
-import { useSavedMoviesContext } from '../../contexts/SavedMoviesContextProvider';
-import { mainApi } from '../../utils/MainApi';
-import Modal from '../Modal/Modal';
-import ModalContent from '../Modal/ModalContent';
-import MovieCardButton from './MovieCardButton/MovieCardButton';
-import './MoviesCard.css';
+import { useContext, useState } from "react";
+import "./MoviesCard.css";
+import { useLocation } from "react-router-dom";
+import auth from '../../utils/MainApi';
+import { Context } from '../../context/Context';
+// MoviesCard — компонент одной карточки фильма.
+const MoviesCard = ({ card, name, duration, image }) => {
+  const [isSaved, setIsSaved] = useState(false);
+  const location = useLocation();
 
-const MoviesCard = ({ movieData }) => {
-  const { savedMovies, setSavedMovies } = useSavedMoviesContext();
-  const { pathname } = useLocation();
-  const [isMovieSaved, setIsMovieSaved] = useState(false);
-  const [isModalOpened, setIsModalOpened] = useState(false);
-  const [modalText, setModalText] = useState('');
+  const { savedMovies } = useContext(Context);
 
-  const handleModalClose = () => {
-    setIsModalOpened(false);
-    setModalText('');
+  const savedMovie = savedMovies.savedMovies.find((movie) => {
+    return movie.nameRU === card.nameRU;
+  });
+
+  const handleSaveClick = () => {
+    setIsSaved(!isSaved);
+
+    const movieCard = {
+      ...card,
+      movieId: card.id,
+      image: `${'https://api.nomoreparties.co'}${card.image.url}`,
+      thumbnail: `${'https://api.nomoreparties.co'}${card.image.formats.thumbnail.url}`,
+    }
+
+    delete movieCard.id;
+    delete movieCard.created_at;
+    delete movieCard.updated_at;
+
+    if (!savedMovie) {
+      auth.saveMovie(movieCard).catch((err) => {
+        console.log(err);
+      })
+    }
+  };
+
+  const movie = savedMovies.savedMovies.find((movie) => {
+    return movie._id === card._id;
+  });
+
+  const handleDeleteClick = () => {
+    auth.deleteMovie(movie._id).then(() => {
+      savedMovies.setSavedMovies(savedMovies.savedMovies.filter((movie) => {
+        return movie._id !== card._id;
+      }))
+    }).catch((err) => {
+      console.log(err);
+    })
   }
 
-  useEffect(() => {
-    setIsMovieSaved(savedMovies.some(movie => movie.movieId === movieData.id || movie.movieId === movieData.movieId));
-  }, [savedMovies, movieData])
-
-  const saveMovieHandler = () => {
-    const savingMovieData = {
-      ...movieData,
-      movieId: movieData.id,
-      image: `${MOVIES_IMAGES_BASE_URL}${movieData.image.url}`,
-      thumbnail: `${MOVIES_IMAGES_BASE_URL}${movieData.image.formats.thumbnail.url}`,
-    };
-    delete savingMovieData.id;
-    delete savingMovieData.created_at;
-    delete savingMovieData.updated_at;
-
-    mainApi.saveMovie(savingMovieData)
-      .then(movie => {
-        setSavedMovies([...savedMovies, movie]);
-      })
-      .catch(err => {
-        setIsModalOpened(true);
-        setModalText(err);
-      })
-  }
-
-  const onDeleteMovie = () => {
-    const deleteParam = pathname === '/movies'
-      ? movieData.id
-      : movieData.movieId;
-    const movieToDelete = savedMovies.find(movie => movie.movieId === deleteParam);
-
-    mainApi.deleteMovie(movieToDelete._id)
-      .then(deletedMovieData => {
-        setSavedMovies(savedMovies.filter(movie => movie._id !== deletedMovieData._id));
-      })
-      .catch(err => {
-        setIsModalOpened(true);
-        setModalText(err);
-      })
+  const isSavedMovie = () => {
+    if (savedMovie) {
+      return true
+    } else {
+      return false
+    }
   }
 
   return (
-    <li className="movie-card">
-
-      <Modal isOpen={isModalOpened}>
-        <ModalContent onClose={handleModalClose} modalText={modalText} />
-      </Modal>
-      <div className="movie-card__description">
-        <h2 className="movie-card__name">
-          {movieData.nameRU}
-        </h2>
-        <span className="movie-card__duration">
-        {movieData.duration} минут
-        </span>
+    <li className="card">
+      <div className="card__header">
+        <h2 className="card__title">{name}</h2>
+        <p className="card__duration">{duration < 60 ? `${duration} минут` : `${Math.floor(duration / 60)}ч ${duration % 60}м`}</p>
       </div>
-      <a
-        className="movie-card__trailer"
-        href={movieData.trailerLink}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <img
-          className="movie-card__image"
-          src={
-            pathname === "/movies"
-              ? `${MOVIES_IMAGES_BASE_URL}/${movieData.image.url}`
-              : movieData.image
-          }
-          alt={movieData.nameRU}
-        />
-      </a>
-
-      <MovieCardButton
-        onClickHandler={isMovieSaved ? onDeleteMovie : saveMovieHandler}
-        typeClass={isMovieSaved && pathname === "/movies"}
-      >
-        {pathname === "/movies" ? 'Сохранить' : 'X'}
-      </MovieCardButton>
-  
+      <img
+        src={image}
+        alt={`Постер к фильму ${name}`}
+        className="card__image"
+      />
+      <div className="card__footer">
+        {location.pathname === "/movies" && (
+          <button className={`card__button ${isSaved || isSavedMovie() ? 'card_button_type_saved' : ''}`} onClick={handleSaveClick}>
+            {!isSaved && !isSavedMovie() ? 'Сохранить' : ''}
+          </button>
+        )}
+        {location.pathname === "/saved-movies" && (
+          <button onClick={handleDeleteClick} className="card__button card__button_type_delete"></button>
+        )}
+      </div>
     </li>
-  )
+  );
 };
 
 export default MoviesCard;

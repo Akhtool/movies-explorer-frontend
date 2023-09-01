@@ -5,12 +5,14 @@
   padding: 0 0 43px 0;
   border-bottom: 1px solid rgba(170, 170, 170, 0.2);
 }
+
 .filter-checkbox__container {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 14px;
 }
+
 .filter-checkbox__input {
   width: 36px;
   height: 20px;
@@ -19,12 +21,15 @@
   cursor: pointer;
   background: url(../../images/checkbox__off.svg);
 }
+
 .filter-checkbox__input:checked {
   background: url(../../images/checkbox__on.svg);
 }
+
 .filter-checkbox__input:hover {
   opacity: 0.8;
 }
+
 .filter-checkbox__text {
   color: #fff;
   font-size: 13px;
@@ -48,9 +53,11 @@
     margin: 0;
     padding: 0 0 63px 0;
   }
+
   .filter-checkbox__container {
     gap: 12px;
   }
+
   .filter-checkbox__text {
     font-size: 11px;
   }

@@ -1,15 +1,11 @@
 import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ isLogged, children }) => {
-  return (
-    <>
-      {
-        isLogged
-          ? children
-          : <Navigate to="/" />
-      }
-    </>
-  )
+const ProtectedRoute = ({ element: Component, ...props }) => {
+  return props.hasToken || props.getToken ? (
+    <Component {...props} />
+  ) : (
+    <Navigate to="/" replace />
+  );
 };
 
 export default ProtectedRoute;

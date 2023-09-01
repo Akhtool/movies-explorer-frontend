@@ -1,167 +1,133 @@
-import { useEffect, useRef, useState } from "react";
-import "./Profile.css";
-import { useCurrentUserContext } from "../../contexts/CurrentUserContextProvider";
 import { useNavigate } from "react-router-dom";
-import { mainApi } from "../../utils/MainApi";
-import { useFormWithValidation } from "../../hooks/useFormWithValidation";
-import {
-  MESSAGE_API_PROFILE_SUCCESS,
-  PATTERN_EMAIL,
-} from "../../constants/constants";
+import "./Profile.css";
+import React, { useContext, useEffect } from 'react';
+import { Context } from '../../context/Context';
+import auth from '../../utils/MainApi';
 
-const Profile = ({ setLoginStatus }) => {
-  const { currentUser, setCurrentUser } = useCurrentUserContext();
-  const [isSameValues, setIsSameValues] = useState(true);
-  const [apiMessage, setApiMessage] = useState("");
-  const { values, handleChange, errors, isValid, resetForm } =
-    useFormWithValidation();
+
+// Profile — компонент страницы изменения профиля.
+const Profile = ({ setCurrentUserData }) => {
+  const { currentUserData } = useContext(Context);
   const navigate = useNavigate();
-  const nameInputRef = useRef(null);
-  const [isEditing, setIsEditing] = useState(false);
 
-  const handleMakeEditable = () => {
-    setIsEditing(true);
-    setApiMessage("");
-  };
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [isChange, setIsChange] = React.useState(true);
 
-    mainApi
-      .editUserData(values)
-      .then((updatedUserData) => {
-        setCurrentUser(updatedUserData);
-        setApiMessage(MESSAGE_API_PROFILE_SUCCESS);
-      })
-      .catch((error) => {
-        setApiMessage(error);
-      })
-      .finally(() => {
-        setIsSameValues(true);
-      });
+  const [nameError, setNameError] = React.useState('');
+  const [emailError, setEmailError] = React.useState('');
 
-    setIsEditing(false);
-  };
+  const [notification, setNotification] = React.useState('');
 
-  useEffect(() => {
-    if (!isEditing) return;
-    nameInputRef.current.focus();
-  }, [isEditing]);
+  const onChangeName = (target) => {
+    setName(target.value);
+    setNameError(target.validationMessage)
+  }
 
-  useEffect(() => {
-    if (!currentUser.name) return;
-    resetForm(false, { name: currentUser.name, email: currentUser.email });
-  }, [currentUser, resetForm]);
+  const onChangeEmail = (target) => {
+    setEmail(target.value)
+    setEmailError(target.validationMessage)
+  }
+
+  const handeEditUserData = (e) => {
+    setIsChange(false);
+
+    if (!nameError && !emailError) {
+      if (!isChange) {
+        auth.editProfile({ name: name || currentUserData.name, email: email || currentUserData.email })
+          .then((res) => {
+            setCurrentUserData({
+              name: res.name,
+              email: res.email
+            })
+
+            setNotification('Данные успешно изменены');
+
+            setTimeout(() => {
+              setNotification('');
+            }, 2000)
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      }
+    }
+  }
 
   const handleLogout = () => {
-    mainApi
-      .logoutUser()
-      .then(() => {
-        setCurrentUser({ name: "", email: "" });
-        localStorage.removeItem("currentId");
-        localStorage.removeItem("search");
-        localStorage.removeItem("token");
-        setLoginStatus(false);
-        navigate("/", { replace: true });
-      })
-      .catch(() => {
-        setCurrentUser({ name: "", email: "" });
-        localStorage.removeItem("currentId");
-        localStorage.removeItem("search");
-        localStorage.removeItem("token");
-        setLoginStatus(false);
-        navigate("/", { replace: true });
-      });
-  };
+    localStorage.clear();
+
+    setCurrentUserData({
+      name: '',
+      email: ''
+    })
+
+    navigate('/', { replace: true });
+  }
 
   useEffect(() => {
-    if (
-      currentUser.name === values.name &&
-      currentUser.email === values.email
-    ) {
-      setIsSameValues(true);
-    } else {
-      setIsSameValues(false);
-    }
-  }, [currentUser, values]);
+    setName(currentUserData.name);
+    setEmail(currentUserData.email);
+  }, [currentUserData.email, currentUserData.name])
+
+  const disabled = name === currentUserData.name && email === currentUserData.email || nameError || emailError;
 
   return (
-    <main className="profile container">
-      <h1 className="profile__title">{`Привет, ${currentUser.name}!`}</h1>
+    <main className="profile">
+      <h2 className="profile__title">{`Привет, ${currentUserData.name}!`}</h2>
       <form
-        name="profile__form"
+        id="profile__form"
         className="profile__form"
-        onSubmit={handleSubmit}
-        noValidate
       >
         <label className="profile__input-container">
-          <div className="profile__input-wrapper">
-            <span className="profile__input-label">Имя</span>
-            <input
-              ref={nameInputRef}
-              disabled={!isEditing}
-              autoComplete="off"
-              required
-              type="text"
-              name="name"
-              className="profile__input"
-              placeholder="Укажите имя"
-              value={values.name || ""}
-              onChange={handleChange}
-              minLength={2}
-              maxLength={30}
-            />
-          </div>
-          <span className="profile__error">{errors.name}</span>
+          <span className="profile__input-label">Имя</span>
+          <input
+            type="text"
+            name="profile-input-name"
+            id="profile-input-name"
+            className="profile__input"
+            value={name || currentUserData.name}
+            onChange={(e) => onChangeName(e.target)}
+            minLength={2}
+            maxLength={30}
+            required={true}
+            disabled={isChange}
+          />
         </label>
+        <span className="profile__input-error">{nameError}</span>
+        <span className="profile__brake-line" />
         <label className="profile__input-container">
-          <div className="profile__input-wrapper">
-            <span className="profile__input-label">E-mail</span>
-            <input
-              disabled={!isEditing}
-              autoComplete="off"
-              required
-              type="email"
-              name="email"
-              className="profile__input"
-              placeholder="Укажите почту"
-              value={values.email || ""}
-              onChange={handleChange}
-              pattern={PATTERN_EMAIL}
-            />
-          </div>
-          <span className="profile__error">{errors.email}</span>
+          <span className="profile__input-label">E-mail</span>
+          <input
+            type="email"
+            name="profile-input-email"
+            id="profile-input-email"
+            className="profile__input"
+            value={email || currentUserData.email}
+            onChange={(e) => onChangeEmail(e.target)}
+            required={true}
+            disabled={isChange}
+          />
         </label>
-
-        <span className="profile__api-error">{apiMessage}</span>
-
-        {isEditing ? (
-          <button
-            type="submit"
-            className="profile__submit"
-            disabled={isSameValues || !isValid}
-          >
-            Сохранить
-          </button>
-        ) : (
-          <div className="profile__buttons">
-            <button
-              type="button"
-              className="profile__button profile__button_type_edit"
-              onClick={handleMakeEditable}
-            >
-              Редактировать
-            </button>
-            <button
-              type="button"
-              className="profile__button profile__button_type_logout"
-              onClick={handleLogout}
-            >
-              Выйти из аккаунта
-            </button>
-          </div>
-        )}
+        <span className="profile__input-error">{emailError}</span>
       </form>
+
+      <span className="profile__input-notitification">{notification}</span>
+      <div className="profile__btn-container">
+        <button
+          type="submit"
+          className="profile__btn-submit"
+          onClick={handeEditUserData}
+          disabled={!isChange ? disabled : false}
+          style={{ opacity: !isChange ? disabled ? '0.5' : '1' : '', cursor: !isChange ? disabled ? 'default' : 'pointer' : '' }}
+        >
+          {isChange ? 'Редактировать' : 'Сохранить'}
+        </button>
+        <button onClick={handleLogout} className="profile__btn-exit">
+          Выйти из аккаунта
+        </button>
+      </div>
     </main>
   );
 };
