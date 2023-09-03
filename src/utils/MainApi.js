@@ -68,8 +68,6 @@ class MainApi {
     return fetch(`${this._baseUrl}/movies/${data}`, {
       method: "DELETE",
       headers: this._headers,
-
-      // body: JSON.stringify(data),
     }).then(this._getResponseData);
   }
 }

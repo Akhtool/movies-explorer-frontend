@@ -1,6 +1,7 @@
 import React from 'react';
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
 import SavedMovies from "../SavedMovies/SavedMovies";
@@ -24,6 +25,7 @@ const App = () => {
 
 
   const hasToken = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -47,6 +49,19 @@ const App = () => {
       })
     }
   }, [])
+
+  // Функция-обработчик для события storage
+const handleLocalStorageChange = (e) => {
+  // Здесь вы можете проверить изменения в localStorage и выполнить необходимые действия.
+  // Например, вы можете проверить, был ли удален токен, и перенаправить пользователя на главную страницу.
+  if (e.key === 'token' && !e.newValue) {
+    // Токен был удален, выполните необходимые действия, например, перенаправление на главную страницу.
+    navigate('/'); // Замените '/' на URL вашей главной страницы.
+  }
+};
+
+// Добавление слушателя события storage
+window.addEventListener('storage', handleLocalStorageChange);
 
   return (
     <Context.Provider value={{

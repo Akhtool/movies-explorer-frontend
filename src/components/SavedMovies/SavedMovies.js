@@ -18,11 +18,15 @@ const SavedMovies = () => {
   const [cards, setCards] = useState([])
 
   const handleSearchMovies = (e) => {
+    setError('')
     setSearchValue(e.target.value);
   }
 
   const getIsShort = (e) => {
-    setIsShort(e.target.checked);
+    const isChecked = e.target.checked;
+
+    setIsShort(isChecked);
+    localStorage.setItem('isSavedMoviesShortChecked', JSON.stringify(isChecked));
 
     if (e.target.checked) {
       savedMovies.setSavedMovies(savedMovies.savedMovies.filter((movie) => {
@@ -33,7 +37,16 @@ const SavedMovies = () => {
     }
   }
 
+  const handleValidateMovieSearch = () => {
+    if (!searchValue.length > 0) {
+      setError('Нужно ввести ключевое слово.')
+      return;
+    }
+  }
+
   const handleSearchClick = (e) => {
+    handleValidateMovieSearch()
+
     e.preventDefault()
     setIsLoading(true);
 
@@ -65,10 +78,18 @@ const SavedMovies = () => {
     })
   }, [])
 
+  useEffect(() => {
+    setError('')
+    let storedIsShort = JSON.parse(localStorage.getItem('isSavedMoviesShortChecked'));
+    if (storedIsShort !== null) {
+      setIsShort(storedIsShort);
+    }
+  }, []);
+
 
   return (
     <main>
-      <SearchForm isShort={isShort} getIsShort={getIsShort} value={searchValue} setValue={handleSearchMovies} handleSearchClick={handleSearchClick} />
+      <SearchForm isShort={isShort} getIsShort={getIsShort} value={searchValue} handleChangeSearchValue={handleSearchMovies} handleSearchClick={handleSearchClick} error={error} />
       {isLoadind ? <Preloader /> : <MoviesCardList isSaved={true} error={error} cards={savedMovies.savedMovies} />}
     </main>
   );

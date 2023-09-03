@@ -15,8 +15,10 @@ const MoviesCard = ({ card, name, duration, image }) => {
   });
 
   const handleSaveClick = () => {
-    setIsSaved(!isSaved);
-
+    setIsSaved(true);
+    if (isSaved) {
+      return;
+    }
     const movieCard = {
       ...card,
       movieId: card.id,
@@ -63,11 +65,14 @@ const MoviesCard = ({ card, name, duration, image }) => {
         <h2 className="card__title">{name}</h2>
         <p className="card__duration">{duration < 60 ? `${duration} минут` : `${Math.floor(duration / 60)}ч ${duration % 60}м`}</p>
       </div>
-      <img
-        src={image}
-        alt={`Постер к фильму ${name}`}
-        className="card__image"
-      />
+      <a href={card.trailerLink} style={{ margin: 0 }}>
+        <img
+            src={image}
+            alt={`Постер к фильму ${name}`}
+            className="card__image"
+        />
+      </a>
+
       <div className="card__footer">
         {location.pathname === "/movies" && (
           <button className={`card__button ${isSaved || isSavedMovie() ? 'card_button_type_saved' : ''}`} onClick={handleSaveClick}>

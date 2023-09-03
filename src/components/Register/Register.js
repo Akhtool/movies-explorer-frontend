@@ -17,6 +17,11 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
   const [passwordError, setPasswordError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
 
+  const validateEmail = (email) => {
+    const regexPattern = new RegExp(/[a-z0-9]+@[a-z]+\.{1,1}[a-z]{2,}/);
+    return regexPattern.test(email);
+  };
+
   const handleSubmit = () => {
     setIsLoading(true);
     if (!nameError && !emailError && !passwordError) {
@@ -26,21 +31,27 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
             name: res.name,
             email: res.email
           })
-
+        })
+        .then(() => {
           auth.login({ email, password }).then((res) => {
             if (res.token) {
-              localStorage.setItem('token', res.token);
-              navigate('/movies', { replace: true })
+              localStorage.setItem("token", res.token);
+              if (localStorage.getItem("token")) {
+                navigate("/movies");
+                window.location.reload();
+              }
             }
-          })
+
+            setIsLoading(false);
+          });
 
           setSavedMovies([])
         })
         .catch((err) => {
           console.log(err);
-        })
-        .finally(() => {
-          setIsLoading(false);
+          if (err.includes("Ошибка: 409")) {
+            setEmailError("Такая почта уже зарегестриована");
+          }
         });
     }
   }
@@ -52,7 +63,13 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
 
   const handleChangeEmail = (target) => {
     setEmail(target.value);
-    setEmailError(target.validationMessage);
+    if (target.validationMessage) {
+      setEmailError(target.validationMessage);
+    } else if (!validateEmail(target.value)) {
+      setEmailError('Укажите домен первого уровня');
+    } else {
+      setEmailError('');
+    }
   }
 
   const handleChangePassword = (target) => {
@@ -129,3 +146,4 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
 };
 
 export default Register;
+

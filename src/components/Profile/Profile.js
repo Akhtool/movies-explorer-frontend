@@ -67,8 +67,17 @@ const Profile = ({ setCurrentUserData }) => {
   }
 
   useEffect(() => {
+    auth.refreshUserData().then((res) => {
+      setCurrentUserData({
+        name: res.name,
+        email: res.email
+      })
+    }).catch((err) => {
+      console.log(err);
+    })
     setName(currentUserData.name);
     setEmail(currentUserData.email);
+
   }, [currentUserData.email, currentUserData.name])
 
   const disabled = name === currentUserData.name && email === currentUserData.email || nameError || emailError;

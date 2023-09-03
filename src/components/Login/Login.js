@@ -16,6 +16,11 @@ const Login = ({ setGetToken, setCurrentUserData, setSavedMovies }) => {
 
   const navigate = useNavigate()
 
+  const validateEmail = (email) => {
+    const regexPattern = new RegExp(/[a-z0-9]+@[a-z]+\.{1,1}[a-z]{2,}/);
+    return regexPattern.test(email);
+  };
+
   const handeSubmit = (e) => {
     e.preventDefault()
     setIsLoading(true);
@@ -25,7 +30,8 @@ const Login = ({ setGetToken, setCurrentUserData, setSavedMovies }) => {
           localStorage.setItem('token', res.token);
           setGetToken(true);
           navigate('/movies');
-          getData();
+          window.location.reload();
+          // getData()
         }
       })
       .catch(() => {
@@ -36,29 +42,35 @@ const Login = ({ setGetToken, setCurrentUserData, setSavedMovies }) => {
       });
   }
 
-  const getData = () => {
-    auth.refreshUserData().then((res) => {
-      setGetToken(true);
-      setCurrentUserData({
-        name: res.name,
-        email: res.email
-      })
-    }).catch((err) => {
-      console.log(err);
-    })
+  // const getData = () => {
+  //   auth.refreshUserData().then((res) => {
+  //     setGetToken(true);
+  //     setCurrentUserData({
+  //       name: res.name,
+  //       email: res.email
+  //     })
+  //   }).catch((err) => {
+  //     console.log(err);
+  //   })
 
-    auth.getSavedMovies().then((res) => {
-      if (res) {
-        setSavedMovies(res);
-      }
-    }).catch((err) => {
-      console.log(err);
-    })
-  }
+  //   auth.getSavedMovies().then((res) => {
+  //     if (res) {
+  //       setSavedMovies(res);
+  //     }
+  //   }).catch((err) => {
+  //     console.log(err);
+  //   })
+  // }
 
   const handleChangeEmail = (target) => {
     setEmail(target.value);
-    setEmailError(target.validationMessage);
+    if (target.validationMessage) {
+      setEmailError(target.validationMessage);
+    } else if (!validateEmail(target.value)) {
+      setEmailError('Укажите домен первого уровня');
+    } else {
+      setEmailError('');
+    }
   }
 
   const handleChangePassword = (target) => {

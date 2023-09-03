@@ -41,7 +41,7 @@
 
 .preloader {
   display: flex;
-  align-items: center;
+  align-items: left;
   justify-content: center;
   box-sizing: border-box;
   width: 396px;

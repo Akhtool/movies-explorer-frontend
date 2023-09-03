@@ -13,5 +13,8 @@ export const useResize = () => {
     };
   }, []);
 
-  return width >= 320 && width <= 480;
+  return {
+    mobile: width >= 320 && width <= 480,
+    noteBook: width >= 481 && width <= 1143,
+  };
 };
