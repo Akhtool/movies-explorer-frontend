@@ -1,20 +1,21 @@
-import React from 'react';
+import React from "react";
 
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/header__logo.svg";
-import auth from '../../utils/MainApi';
-import Preloader from '../Preloader/Preloader';
+import auth from "../../utils/MainApi";
+import Preloader from "../Preloader/Preloader";
 
 // Login — компонент страницы авторизации.
-const Login = ({ setGetToken, setCurrentUserData, setSavedMovies }) => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [emailError, setEmailError] = React.useState('');
-  const [error, setError] = React.useState('');
+const Login = ({ setIsLoggedIn, setGetToken }) => {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState("");
+  const [error, setError] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     const regexPattern = new RegExp(/[a-z0-9]+@[a-z]+\.{1,1}[a-z]{2,}/);
@@ -22,25 +23,27 @@ const Login = ({ setGetToken, setCurrentUserData, setSavedMovies }) => {
   };
 
   const handeSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     setIsLoading(true);
-    auth.login({ email, password })
+    auth
+      .login({ email, password })
       .then((res) => {
         if (res.token) {
-          localStorage.setItem('token', res.token);
+          localStorage.setItem("token", res.token);
           setGetToken(true);
-          navigate('/movies');
+          setIsLoggedIn(true);
+          navigate("/movies");
           window.location.reload();
           // getData()
         }
       })
       .catch(() => {
-        setError('Неправильный логин или пароль')
+        setError("Неправильный логин или пароль");
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }
+  };
 
   // const getData = () => {
   //   auth.refreshUserData().then((res) => {
@@ -67,15 +70,16 @@ const Login = ({ setGetToken, setCurrentUserData, setSavedMovies }) => {
     if (target.validationMessage) {
       setEmailError(target.validationMessage);
     } else if (!validateEmail(target.value)) {
-      setEmailError('Укажите домен первого уровня');
+      setEmailError("Укажите домен первого уровня");
     } else {
-      setEmailError('');
+      setEmailError("");
     }
-  }
+  };
 
   const handleChangePassword = (target) => {
     setPassword(target.value);
-  }
+    setPasswordError(target.validationMessage);
+  };
 
   const disabled = !email || !password || emailError || isLoading;
 
@@ -104,14 +108,25 @@ const Login = ({ setGetToken, setCurrentUserData, setSavedMovies }) => {
               <input
                 onChange={(e) => handleChangePassword(e.target)}
                 value={password}
+                minLength={8}
                 type="password"
                 className="login__input"
                 required
               />
-              <span className="login__input-error">{error}</span>
+              <span className="login__input-error">{passwordError}</span>
             </div>
             {isLoading && <Preloader />}
-            <button disabled={disabled} onClick={(e) => handeSubmit(e)} className={`${disabled ? 'login__button login__button_disabled' : 'login__button'}`}>Войти</button>
+            <button
+              disabled={disabled}
+              onClick={(e) => handeSubmit(e)}
+              className={`${
+                disabled
+                  ? "login__button login__button_disabled"
+                  : "login__button"
+              }`}
+            >
+              Войти
+            </button>
           </form>
 
           <div className="login__text-container">

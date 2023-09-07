@@ -76,7 +76,7 @@ const auth = new MainApi({
   baseUrl: "https://api.akhtool.movies.nomoredomains.xyz",
   headers: {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${localStorage.getItem("token") || ''}`,
+    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
   },
 });
 

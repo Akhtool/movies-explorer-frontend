@@ -16,7 +16,7 @@ class MoviesApi {
       method: "GET",
       headers: this._headers,
     });
-    return this._getResponseData(res, 'Не удалось получить данные фильмов');
+    return this._getResponseData(res, "Не удалось получить данные фильмов");
   }
 }
 

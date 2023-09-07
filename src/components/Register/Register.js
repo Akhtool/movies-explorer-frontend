@@ -1,20 +1,20 @@
-import React from 'react';
+import React from "react";
 import "./Register.css";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/header__logo.svg";
-import auth from '../../utils/MainApi';
-import Preloader from '../Preloader/Preloader';
+import auth from "../../utils/MainApi";
+import Preloader from "../Preloader/Preloader";
 // Register — компонент страницы регистрации.
 const Register = ({ setSavedMovies, setCurrentUserData }) => {
   const navigate = useNavigate();
 
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-  const [nameError, setNameError] = React.useState('');
-  const [emailError, setEmailError] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState('');
+  const [nameError, setNameError] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
 
   const validateEmail = (email) => {
@@ -25,12 +25,13 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
   const handleSubmit = () => {
     setIsLoading(true);
     if (!nameError && !emailError && !passwordError) {
-      auth.register({ name, email, password })
+      auth
+        .register({ name, email, password })
         .then((res) => {
           setCurrentUserData({
             name: res.name,
-            email: res.email
-          })
+            email: res.email,
+          });
         })
         .then(() => {
           auth.login({ email, password }).then((res) => {
@@ -45,7 +46,7 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
             setIsLoading(false);
           });
 
-          setSavedMovies([])
+          setSavedMovies([]);
         })
         .catch((err) => {
           console.log(err);
@@ -54,30 +55,37 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
           }
         });
     }
-  }
+  };
 
   const handleChangeName = (target) => {
     setName(target.value);
     setNameError(target.validationMessage);
-  }
+  };
 
   const handleChangeEmail = (target) => {
     setEmail(target.value);
     if (target.validationMessage) {
       setEmailError(target.validationMessage);
     } else if (!validateEmail(target.value)) {
-      setEmailError('Укажите домен первого уровня');
+      setEmailError("Укажите домен первого уровня");
     } else {
-      setEmailError('');
+      setEmailError("");
     }
-  }
+  };
 
   const handleChangePassword = (target) => {
     setPassword(target.value);
     setPasswordError(target.validationMessage);
-  }
+  };
 
-  const disabled = !name || !email || !password || nameError || emailError || passwordError || isLoading;
+  const disabled =
+    !name ||
+    !email ||
+    !password ||
+    nameError ||
+    emailError ||
+    passwordError ||
+    isLoading;
 
   return (
     <main>
@@ -117,19 +125,29 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
               <label className="register__input-label">Пароль</label>
               <input
                 type="password"
-                className={`register__input ${passwordError ? 'register__input_type_password' : ''}`}
+                className={`register__input ${
+                  passwordError ? "register__input_type_password" : ""
+                }`}
                 required
                 minLength={8}
                 value={password}
                 onChange={(e) => handleChangePassword(e.target)}
               />
-              <span className="register__input-error">
-                {passwordError}
-              </span>
+              <span className="register__input-error">{passwordError}</span>
             </div>
           </form>
           {isLoading && <Preloader />}
-          <button onClick={handleSubmit} disabled={disabled} className={`${disabled ? 'register__button register__button_disabled' : 'register__button'}`}>Зарегистрироваться</button>
+          <button
+            onClick={handleSubmit}
+            disabled={disabled}
+            className={`${
+              disabled
+                ? "register__button register__button_disabled"
+                : "register__button"
+            }`}
+          >
+            Зарегистрироваться
+          </button>
           <div className="register__text-container">
             <p className="register__text">Уже зарегистрированы?</p>
             <Link
@@ -146,4 +164,3 @@ const Register = ({ setSavedMovies, setCurrentUserData }) => {
 };
 
 export default Register;
-

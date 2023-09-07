@@ -14,7 +14,8 @@ export const useResize = () => {
   }, []);
 
   return {
-    mobile: width >= 320 && width <= 480,
+    mobile: width >= 320 && width <= 767,
     noteBook: width >= 481 && width <= 1143,
+    PC: width >= 1144
   };
 };

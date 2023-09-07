@@ -6,7 +6,7 @@ import auth from '../../utils/MainApi';
 
 
 // Profile — компонент страницы изменения профиля.
-const Profile = ({ setCurrentUserData }) => {
+const Profile = ({ setCurrentUserData, setIsLoggedIn, isLoggedIn }) => {
   const { currentUserData } = useContext(Context);
   const navigate = useNavigate();
 
@@ -56,6 +56,7 @@ const Profile = ({ setCurrentUserData }) => {
   }
 
   const handleLogout = () => {
+    setIsLoggedIn(false);
     localStorage.clear();
 
     setCurrentUserData({
@@ -65,6 +66,8 @@ const Profile = ({ setCurrentUserData }) => {
 
     navigate('/', { replace: true });
   }
+
+
 
   useEffect(() => {
     auth.refreshUserData().then((res) => {
@@ -78,11 +81,12 @@ const Profile = ({ setCurrentUserData }) => {
     setName(currentUserData.name);
     setEmail(currentUserData.email);
 
-  }, [currentUserData.email, currentUserData.name])
+  }, [currentUserData.email, currentUserData.name, isLoggedIn])
 
   const disabled = name === currentUserData.name && email === currentUserData.email || nameError || emailError;
 
   return (
+    isLoggedIn && 
     <main className="profile">
       <h2 className="profile__title">{`Привет, ${currentUserData.name}!`}</h2>
       <form
