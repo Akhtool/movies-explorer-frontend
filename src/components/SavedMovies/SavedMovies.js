@@ -108,7 +108,7 @@ const SavedMovies = () => {
 
   useEffect(() => {
     setError("");
-    localStorage.setItem("searchValue", JSON.stringify("a"));
+    localStorage.setItem("searchValue", JSON.stringify(""));
   }, []);
 
   useEffect(() => {
