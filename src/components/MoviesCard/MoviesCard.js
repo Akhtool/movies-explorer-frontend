@@ -50,6 +50,7 @@ const MoviesCard = ({ card, name, duration, image }) => {
         })
         .catch((err) => {
           console.log(err);
+          setIsSaved(false);
         });
     }
   };
@@ -63,12 +64,17 @@ const MoviesCard = ({ card, name, duration, image }) => {
   const handleDeleteClick = () => {
     setIsSaved(false);
     if (isSavedMovie) {
-      auth.deleteMovie(card._id).then(() => {
+      auth
+      .deleteMovie(card._id)
+      .then(() => {
         savedMovies.setSavedMovies(
           savedMovies.savedMovies.filter((movie) => {
             return movie.movieId !== card.movieId;
           })
         );
+      })
+      .catch((err) => {
+        console.log(err);
       });
     }
   };
@@ -77,12 +83,16 @@ const MoviesCard = ({ card, name, duration, image }) => {
     setIsSaved(false);
 
     if (movie) {
-      auth.deleteMovie(savedMovie._id).then(() => {
+      auth.deleteMovie(savedMovie._id)
+      .then(() => {
         savedMovies.setSavedMovies(
           savedMovies.savedMovies.filter((movie) => {
             return movie.movieId !== card.id;
           })
         );
+      })
+      .catch((err) => {
+        console.log(err);
       });
     }
   };

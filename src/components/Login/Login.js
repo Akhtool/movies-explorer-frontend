@@ -30,7 +30,6 @@ const Login = ({ setIsLoggedIn, setGetToken }) => {
       .then((res) => {
         if (res.token) {
           localStorage.setItem("token", res.token);
-          setGetToken(true);
           setIsLoggedIn(true);
           navigate("/movies");
           window.location.reload();
@@ -39,10 +38,8 @@ const Login = ({ setIsLoggedIn, setGetToken }) => {
       })
       .catch(() => {
         setError("Неправильный логин или пароль");
-      })
-      .finally(() => {
         setIsLoading(false);
-      });
+      })
   };
 
   // const getData = () => {

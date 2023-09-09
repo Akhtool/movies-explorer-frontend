@@ -35,39 +35,59 @@ class MainApi {
   }
 
   refreshUserData() {
+    const token = localStorage.getItem('token');
     return fetch(`${this._baseUrl}/users/me`, {
       method: "GET",
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     }).then(this._getResponseData);
   }
 
   editProfile(data) {
+    const token = localStorage.getItem('token');
     return fetch(`${this._baseUrl}/users/me`, {
       method: "PATCH",
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(data),
     }).then(this._getResponseData);
   }
 
   getSavedMovies() {
+    const token = localStorage.getItem('token');
     return fetch(`${this._baseUrl}/movies`, {
       method: "GET",
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     }).then(this._getResponseData);
   }
 
   saveMovie(data) {
+    const token = localStorage.getItem('token');
     return fetch(`${this._baseUrl}/movies`, {
       method: "POST",
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(data),
     }).then(this._getResponseData);
   }
 
   deleteMovie(data) {
+    const token = localStorage.getItem('token');
     return fetch(`${this._baseUrl}/movies/${data}`, {
       method: "DELETE",
-      headers: this._headers,
+      headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
     }).then(this._getResponseData);
   }
 }
@@ -76,7 +96,6 @@ const auth = new MainApi({
   baseUrl: "https://api.akhtool.movies.nomoredomains.xyz",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
   },
 });
 

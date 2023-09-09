@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
 import SavedMovies from "../SavedMovies/SavedMovies";
@@ -23,35 +22,33 @@ const App = () => {
     id: "",
   });
   const [savedMovies, setSavedMovies] = React.useState([]);
-  const [getToken, setGetToken] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token'));
 
-  const hasToken = localStorage.getItem("token");
+  // const tokenCheck = React.useCallback(() => {
+  //   const token = localStorage.getItem("token");
 
-  const tokenCheck = React.useCallback(() => {
-    const token = localStorage.getItem("token");
-
-    if (token && !isLoggedIn) {
-      auth
-        .refreshUserData(token)
-        .then((res) => {
-          if (res) {
-            setIsLoggedIn(true);
-          }
-        })
-        .catch((err) => {
-          console.log("token check error:", err);
-        });
-    }
-  }, [isLoggedIn]);
+  //   if (token ) {
+  //     auth
+  //       .refreshUserData(token)
+  //       .then((res) => {
+  //         if (res) {
+  //           setIsLoggedIn(true);
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.log("token check error:", err);
+  //         setIsLoggedIn(false);
+  //       });
+  //   }
+  // }, [isLoggedIn]);
 
   React.useEffect(() => {
-    tokenCheck();
     if (localStorage.getItem("token")) {
+      setIsLoggedIn(true);
       auth
         .refreshUserData()
         .then((res) => {
-          setGetToken(true);
+          setIsLoggedIn(true);
           setCurrentUserData({
             name: res.name,
             id: res.id,
@@ -59,6 +56,8 @@ const App = () => {
           });
         })
         .catch((err) => {
+          setIsLoggedIn(false);
+          localStorage.clear();
           console.log(err);
         });
 
@@ -73,7 +72,7 @@ const App = () => {
           console.log(err);
         });
     }
-  }, [isLoggedIn]);
+  }, []);
 
   // // Функция-обработчик для события storage
   // const handleLocalStorageChange = (e) => {
@@ -116,7 +115,6 @@ const App = () => {
               <Login
                 setCurrentUserData={setCurrentUserData}
                 setSavedMovies={setSavedMovies}
-                setGetToken={setGetToken}
                 setIsLoggedIn={setIsLoggedIn}
               />
             }
@@ -137,8 +135,6 @@ const App = () => {
                 <Header isLoggedIn={isLoggedIn}/>
                 <ProtectedRoute
                   element={Movies}
-                  hasToken={hasToken}
-                  getToken={getToken}
                   isLoggedIn={isLoggedIn}
                 />
                 <Footer />
@@ -152,8 +148,6 @@ const App = () => {
                 <Header isLoggedIn={isLoggedIn}/>
                 <ProtectedRoute
                   element={SavedMovies}
-                  hasToken={hasToken}
-                  getToken={getToken}
                   isLoggedIn={isLoggedIn}
                 />
                 <Footer />
@@ -167,9 +161,7 @@ const App = () => {
                 <Header isLoggedIn={isLoggedIn}/>
                 <ProtectedRoute
                   element={Profile}
-                  getToken={getToken}
                   setCurrentUserData={setCurrentUserData}
-                  hasToken={hasToken}
                   setIsLoggedIn={setIsLoggedIn}
                   isLoggedIn={isLoggedIn}
                 />

@@ -4,12 +4,34 @@ import { useEffect, useState } from "react";
 import { useResize } from "../../hooks/useResize";
 
 // MoviesCardList — компонент, который управляет отрисовкой карточек фильмов на страницу и их количеством.
-const MoviesCardList = ({ isSaved, cards, emptySearchMessage }) => {
+const MoviesCardList = ({
+  isSaved,
+  cards,
+  emptySearchMessage,
+  setIsLoggedIn,
+}) => {
   const [amountForShow, setAmountForShow] = useState();
   const resize = useResize();
   const [moreBtnVissible, setMoreBtnVissible] = useState(true);
   const [isClickOnMore, setIsClickOnMore] = useState(false);
 
+  //можно удалить
+  useEffect(() => {
+    if (resize.mobile) {
+      setAmountForShow(5);
+    } else if (resize.noteBook) {
+      setAmountForShow(8);
+    } else if (resize.PC) {
+      setAmountForShow(12);
+    }
+  }, [cards]);
+
+  //можно удалить
+  useEffect(() => {
+    setAmountForShow(getMoviesAmountOnPage);
+  }, []);
+
+  //если удалить, то что сверху, дописат cards в 51
   useEffect(() => {
     const totalShowedCardAmount = document.getElementsByClassName("card");
     if (cards.length < 6 || totalShowedCardAmount.length === cards.length) {
@@ -17,44 +39,48 @@ const MoviesCardList = ({ isSaved, cards, emptySearchMessage }) => {
     } else {
       setMoreBtnVissible(true);
     }
-    if (isClickOnMore) {
-      return;
-    }
-    setAmountForShow(getMoviesAmountOnPage);
-    setIsClickOnMore(false);
-  }, [resize, isClickOnMore, cards.length]);
-
+  }, [resize]);
   useEffect(() => {
     if (resize.mobile) {
       setAmountForShow(5);
-    } 
-    
-    else if(resize.noteBook) {
+    } else if (resize.noteBook) {
       setAmountForShow(8);
     } else if (resize.PC) {
       setAmountForShow(12);
     }
   }, [resize.mobile, resize.noteBook, resize.PC]);
 
+  //можно удалить, если удалить всё остальное
   const getMoviesAmountOnPage = () => {
-    if (window.innerWidth >= 320 && window.innerWidth < 768) {
+    if (isClickOnMore) {
+      if (resize.mobile) {
+        return amountForShow + 2;
+      } else {
+        if (resize.noteBook) {
+          return amountForShow + 2;
+        }
+
+        return amountForShow + 2;
+      }
+    }
+    if (resize.mobile) {
       return 5;
     } else {
-      if (Math.floor(window.innerWidth / 370) > 3) {
-        return 4 * 3;
+      if (resize.noteBook) {
+        return 8;
       }
-      return 4 * Math.floor(window.innerWidth / 370);
+      return 12;
     }
   };
+
   const handleGetMoreClick = () => {
     setIsClickOnMore(true);
-
-    if (window.innerWidth >= 320 && window.innerWidth < 768) {
+    if (resize.mobile) {
       setAmountForShow(amountForShow + 2);
-    } else if (Math.floor(window.innerWidth / 370) >= 3) {
-      setAmountForShow(amountForShow + 3);
+    } else if (resize.noteBook) {
+      setAmountForShow(amountForShow + 2);
     } else {
-      setAmountForShow(amountForShow + 2);
+      setAmountForShow(amountForShow + 3);
     }
   };
 
@@ -77,6 +103,7 @@ const MoviesCardList = ({ isSaved, cards, emptySearchMessage }) => {
                       : `https://api.nomoreparties.co${card.image.url}`
                   }
                   name={card.nameRU}
+                  setIsLoggedIn={setIsLoggedIn}
                 />
               ))}
           </ul>
@@ -96,7 +123,9 @@ const MoviesCardList = ({ isSaved, cards, emptySearchMessage }) => {
       ) : (
         <span className="movies-card__error">
           {" "}
-          {emptySearchMessage ? emptySearchMessage : "Нужно ввести ключевое слово"}
+          {emptySearchMessage
+            ? emptySearchMessage
+            : "Нужно ввести ключевое слово"}
         </span>
       )}
     </section>

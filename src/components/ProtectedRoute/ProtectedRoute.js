@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ element: Component, ...props }) => {
-  return props.hasToken || props.getToken ? (
+  return props.isLoggedIn ? (
     <Component {...props} />
   ) : (
     <Navigate to="/" replace />
