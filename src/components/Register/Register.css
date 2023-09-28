@@ -103,6 +103,11 @@
 .register__button:hover {
   opacity: 0.8;
 }
+.register__button_disabled {
+  color: #C2C2C2;
+  background: #fff;
+  cursor: default;
+}
 .register__text-container {
   margin: 16px 0 0 0;
   padding: 0;

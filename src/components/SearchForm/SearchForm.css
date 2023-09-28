@@ -61,6 +61,10 @@
   opacity: 0.8;
 }
 
+.search_form__error {
+  color: #F47373;
+}
+
 /* Стили для планшетов (768px) */
 @media screen and (min-width: 321px) and (max-width: 768px) {
   .search-form {

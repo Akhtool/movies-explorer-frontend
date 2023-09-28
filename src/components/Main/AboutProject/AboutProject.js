@@ -3,7 +3,7 @@ import SectionTitle from "../SectionTitle/SectionTitle";
 // AboutProject — компонент с описанием дипломного проекта.
 const AboutProject = (props) => {
   return (
-    <section id="#project" className="project">
+    <section id="project" className="project">
       <SectionTitle title={"О проекте"} />
       <ul className="project__text-list">
         <li>

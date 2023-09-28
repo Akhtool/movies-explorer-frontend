@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, NavLink } from "react-router-dom";
 import "./Header.css";
 import logo from "../../images/header__logo.svg";
 import Navigation from "../Navigation/Navigation";
@@ -7,7 +7,7 @@ import { useState } from "react";
 //других страницах, должна менять отображение, если пользователь авторизован или не авторизован  Такое
 //поведение нужно сразу предусмотреть в вёрстке, даже несмотря на то, что сама авторизация ещё
 //не реализована.
-const Header = (props) => {
+const Header = ({ isLoggedIn }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const openMenu = () => {
@@ -16,6 +16,7 @@ const Header = (props) => {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
   return (
     <div
       className={
@@ -25,7 +26,44 @@ const Header = (props) => {
       <Link to="/" className="header__link">
         <img className="header__logo" src={logo} alt="Логотип" />
       </Link>
-      {location.pathname === "/" && (
+
+      {isLoggedIn ? (
+        <ul className="header__nav">
+          <li className="header__nav-item">
+            <NavLink
+              to="/movies"
+              className={({ isActive }) =>
+                isActive
+                  ? "header__nav-films header__nav-films_active"
+                  : "header__nav-films"
+              }
+            >
+              Фильмы
+            </NavLink>
+          </li>
+          <li className="header__nav-item">
+            <NavLink
+              to="/saved-movies"
+              className={({ isActive }) =>
+                isActive
+                  ? "header__nav-saved-films header__nav-saved-films_active"
+                  : "header__nav-saved-films"
+              }
+            >
+              Сохраненные фильмы
+            </NavLink>
+          </li>
+          <li className="header__nav-item">
+            <NavLink to="/profile" className="header__nav-profile">
+              <p className="header__nav-profile-text">Аккаунт</p>
+              <div className="header__nav-profile-logo"></div>
+            </NavLink>
+          </li>
+          <li className="header__menu-item">
+            <button className="header__menu" onClick={openMenu}></button>
+          </li>
+        </ul>
+      ) : (
         <ul className="header__auth">
           <li className="header__auth-item">
             <Link to="/signup" className="header__auth-register-link">
@@ -36,29 +74,6 @@ const Header = (props) => {
             <Link to="/signin" className="header__auth-login-link">
               Войти
             </Link>
-          </li>
-        </ul>
-      )}
-      {location.pathname !== "/" && (
-        <ul className="header__nav">
-          <li className="header__nav-item">
-            <Link to="/movies" className="header__nav-films">
-              Фильмы
-            </Link>
-          </li>
-          <li className="header__nav-item">
-            <Link to="/saved-movies" className="header__nav-saved-films">
-              Сохраненные фильмы
-            </Link>
-          </li>
-          <li className="header__nav-item">
-            <Link to="/profile" className="header__nav-profile">
-              <p className="header__nav-profile-text">Аккаунт</p>
-              <div className="header__nav-profile-logo"></div>
-            </Link>
-          </li>
-          <li className="header__menu-item">
-            <button className="header__menu" onClick={openMenu}></button>
           </li>
         </ul>
       )}
